@@ -1,15 +1,52 @@
-.pay-paid {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+.status-banner {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.9rem;
+  border-radius: var(--p-content-border-radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.25rem;
 }
 
-.pay-due {
-  background: #fffbeb;
-  border-color: #fde68a;
+.status-banner .status-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.status-banner .status-body {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  line-height: 1.35;
+}
+
+.status-body span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.status-banner.paid {
+  background: var(--p-green-50);
+  border: 1px solid var(--p-green-200);
+  color: var(--p-green-900);
+}
+
+.status-banner.due {
+  background: var(--p-amber-50);
+  border: 1px solid var(--p-amber-200);
+  color: var(--p-amber-900);
+}
+
+.status-banner.neutral {
+  background: var(--p-blue-50);
+  border: 1px solid var(--p-blue-200);
+  color: var(--p-blue-900);
+}
+
+.card-head {
+  margin-bottom: 0.75rem;
 }

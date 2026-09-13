@@ -1,60 +1,65 @@
 @if (loading()) {
-  <div class="empty">Loading payments…</div>
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>Loading payments…</span></div>
 } @else if (error()) {
-  <div class="alert alert-error">{{ error() }}</div>
+  <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
-  <h1>Payments</h1>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Payments</h1>
+      <p class="page-subtitle">Tuition status and payment history.</p>
+    </div>
+  </div>
 
   @if (current(); as cp) {
     @if (cp.status === 'paid') {
-      <div class="card pay-paid">
-        <strong>All set for {{ cp.month }} 🎉</strong>
-        <p style="margin:0.3rem 0 0;font-size:0.9rem">
-          {{ cp.amount }} EGP paid {{ cp.paidOn ? 'on ' + (cp.paidOn | date: 'shortDate') : '' }}
-        </p>
+      <div class="status-banner paid">
+        <span class="status-icon bg-green-50 text-green"><i class="pi pi-check"></i></span>
+        <div class="status-body">
+          <strong>All set for {{ cp.month }} 🎉</strong>
+          <span>{{ cp.amount }} EGP paid{{ cp.paidOn ? ' on ' + (cp.paidOn | date: 'longDate') : '' }}</span>
+        </div>
+        <p-tag value="Paid" severity="success" class="ml-auto" />
       </div>
     } @else {
-      <div class="card pay-due">
-        <strong>Payment due for {{ cp.month }}</strong>
-        <p style="margin:0.3rem 0 0;font-size:0.9rem">
-          {{ cp.amount }} EGP — <span [class]="'badge badge-' + cp.status">{{ cp.status }}</span>
-        </p>
-        <p style="margin:0.5rem 0 0;font-size:0.82rem;color:var(--muted)">
-          Pay in cash to your teacher to get your status marked as paid.
-        </p>
+      <div class="status-banner due">
+        <span class="status-icon bg-amber-50 text-amber"><i class="pi pi-wallet"></i></span>
+        <div class="status-body">
+          <strong>Payment {{ cp.status }} for {{ cp.month }}</strong>
+          <span>{{ cp.amount }} EGP — pay in cash to your teacher to get marked as paid.</span>
+        </div>
+        <p-tag [value]="cp.status" [severity]="severity(cp.status)" class="ml-auto" />
       </div>
     }
   } @else {
-    <div class="card">
-      <div class="empty">No payment record for {{ currentMonth() }} yet. Ask your teacher if you have any questions.</div>
+    <div class="status-banner neutral">
+      <span class="status-icon bg-blue-50 text-primary"><i class="pi pi-info"></i></span>
+      <div class="status-body">
+        <strong>No payment record for {{ currentMonth() }}</strong>
+        <span>Ask your teacher if you have any questions.</span>
+      </div>
     </div>
   }
 
-  <section class="card">
-    <h2>History</h2>
+  <p-card>
+    <div class="card-head">
+      <span class="section-title">History</span>
+    </div>
     @if (payments().length === 0) {
-      <div class="empty">No payment history yet.</div>
+      <div class="state">No payment history yet.</div>
     } @else {
-      <table>
-        <thead>
+      <p-table [value]="payments()" [size]="'small'">
+        <ng-template pTemplate="header">
+          <tr><th>Month</th><th>Amount</th><th>Status</th><th>Paid on</th></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-p>
           <tr>
-            <th>Month</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Paid on</th>
+            <td><strong>{{ p.month }}</strong></td>
+            <td>{{ p.amount }} EGP</td>
+            <td><p-tag [value]="p.status" [severity]="severity(p.status)" /></td>
+            <td>{{ p.paidOn ? (p.paidOn | date: 'longDate') : '—' }}</td>
           </tr>
-        </thead>
-        <tbody>
-          @for (p of payments(); track p._id) {
-            <tr>
-              <td><strong>{{ p.month }}</strong></td>
-              <td>{{ p.amount }} EGP</td>
-              <td><span [class]="'badge badge-' + p.status">{{ p.status }}</span></td>
-              <td>{{ p.paidOn ? (p.paidOn | date: 'shortDate') : '—' }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+        </ng-template>
+      </p-table>
     }
-  </section>
+  </p-card>
 }

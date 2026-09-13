@@ -1,34 +1,50 @@
-<div class="app-shell">
-  @if (auth.isStudent()) {
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">New Code Academy</div>
-        <div class="user-row">
-          <span class="user-name">{{ auth.user()?.name }}</span>
-          <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.25)" (click)="logout()">Logout</button>
-        </div>
+@if (auth.isStudent()) {
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <i class="pi pi-graduation-cap brand-icon"></i>
+        <span>New Code Academy</span>
       </div>
-    </header>
-    <nav class="bottom-nav">
-      <a routerLink="/dashboard" routerLinkActive="active">
-        <span class="nav-icon">🏠</span>
-        <span>Home</span>
-      </a>
-      <a routerLink="/lessons" routerLinkActive="active">
-        <span class="nav-icon">🎬</span>
-        <span>Lessons</span>
-      </a>
-      <a routerLink="/grades" routerLinkActive="active">
-        <span class="nav-icon">📊</span>
-        <span>Grades</span>
-      </a>
-      <a routerLink="/payments" routerLinkActive="active">
-        <span class="nav-icon">💳</span>
-        <span>Payments</span>
-      </a>
-    </nav>
-  }
-  <main class="container">
-    <router-outlet />
-  </main>
-</div>
+      <nav class="topnav">
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="pi pi-home"></i><span>Home</span>
+        </a>
+        <a routerLink="/lessons" routerLinkActive="active">
+          <i class="pi pi-video"></i><span>Lessons</span>
+        </a>
+        <a routerLink="/grades" routerLinkActive="active">
+          <i class="pi pi-chart-bar"></i><span>Grades</span>
+        </a>
+        <a routerLink="/payments" routerLinkActive="active">
+          <i class="pi pi-credit-card"></i><span>Payments</span>
+        </a>
+      </nav>
+      <div class="user-row">
+        <span class="user-name">{{ auth.user()?.name }}</span>
+        <p-button [text]="true" [rounded]="true" [icon]="theme.isDark() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
+                  tooltipPos="left" pTooltip="Toggle dark mode" (onClick)="theme.toggle()" />
+        <p-button [text]="true" [rounded]="true" icon="pi pi-sign-out" styleClass="logout-btn"
+                  tooltipPos="left" pTooltip="Log out" (onClick)="logout()" />
+      </div>
+    </div>
+  </header>
+}
+<main class="page">
+  <router-outlet />
+</main>
+@if (auth.isStudent()) {
+  <nav class="bottom-nav">
+    <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <i class="pi pi-home"></i><span>Home</span>
+    </a>
+    <a routerLink="/lessons" routerLinkActive="active">
+      <i class="pi pi-video"></i><span>Lessons</span>
+    </a>
+    <a routerLink="/grades" routerLinkActive="active">
+      <i class="pi pi-chart-bar"></i><span>Grades</span>
+    </a>
+    <a routerLink="/payments" routerLinkActive="active">
+      <i class="pi pi-credit-card"></i><span>Payments</span>
+    </a>
+  </nav>
+}

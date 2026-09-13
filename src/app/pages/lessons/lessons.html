@@ -1,64 +1,85 @@
 @if (loading()) {
-  <div class="empty">Loading lessons…</div>
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>Loading lessons…</span></div>
 } @else if (error()) {
-  <div class="alert alert-error">{{ error() }}</div>
+  <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Lessons</h1>
+      <p class="page-subtitle">Work through each module and mark lessons as watched.</p>
+    </div>
+  </div>
+
   @if (active(); as current) {
-    <section class="card player-card">
+    <p-card class="player-card mb-4">
       <div class="iframe-wrap">
-        <iframe [src]="'https://youtube.com/embed/' + current.youtubeVideoId | safeUrl"
+        <iframe [src]="embedUrl(current.youtubeVideoId) | safeUrl"
                 title="{{ current.title }}"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen></iframe>
       </div>
       <div class="player-meta">
-        <span class="streak-badge">🔥 {{ progress.watchedCount(lessons()) }} watched</span>
-        <span class="label" style="margin:0">{{ current.module }}</span>
-        <h2 style="margin:0.15rem 0 0">{{ current.title }}</h2>
+        <div class="player-head">
+          <div>
+            <p-tag [value]="current.module" severity="secondary" />
+            <h2 class="player-title">{{ current.title }}</h2>
+          </div>
+          <p-button [icon]="progress.isWatched(current._id) ? 'pi pi-check-circle' : 'pi pi-circle'"
+                    [label]="progress.isWatched(current._id) ? 'Watched' : 'Mark watched'"
+                    [severity]="progress.isWatched(current._id) ? 'success' : 'secondary'"
+                    [outlined]="progress.isWatched(current._id) ? false : true"
+                    (onClick)="toggleWatched(current)" />
+        </div>
         @if (current.description) {
-          <p style="color:var(--muted);margin:0.4rem 0 0">{{ current.description }}</p>
+          <p class="muted player-desc">{{ current.description }}</p>
         }
       </div>
-    </section>
+    </p-card>
   }
 
   @for (module of modules(); track module) {
-    <section class="card">
+    <p-card class="module-card">
       <div class="module-head">
-        <h2>{{ module }}</h2>
-        <div class="module-progress">
-          <div class="progress-bar">
-            <div class="progress-bar-fill" [style.width.%]="moduleProgress(module).percent"></div>
-          </div>
-          <span class="module-count">{{ moduleProgress(module).count }}/{{ moduleProgress(module).total }}</span>
+        <div>
+          <h3 class="module-title mb-0">{{ module }}</h3>
+          <span class="muted module-count">{{ moduleProgress(module).count }} / {{ moduleProgress(module).total }} watched</span>
+        </div>
+        <div class="module-progress" style="min-width:150px">
+          <p-progressbar [value]="moduleProgress(module).percent" [showValue]="true"
+                         [style]="{ height: '10px' }" />
         </div>
       </div>
+
       <ul class="lesson-list">
         @for (l of byModule(module); track l._id) {
-          <li>
-            <div class="check" [class.done]="progress.isWatched(l._id)" (click)="open(l)">
+          <li [class.active]="active()?._id === l._id">
+            <button class="lesson-check" [class.done]="progress.isWatched(l._id)"
+                    [attr.aria-label]="'Toggle watched for ' + l.title" (click)="toggleWatched(l)">
               @if (progress.isWatched(l._id)) {
-                <span>✓</span>
+                <i class="pi pi-check"></i>
               }
-            </div>
+            </button>
             <button class="lesson-btn" (click)="open(l)">
               <span class="lesson-order">{{ l.order }}</span>
-              <span>
+              <span class="lesson-info">
                 <strong>{{ l.title }}</strong>
-                <br />
-                <span style="color:var(--muted);font-size:0.78rem">{{ l.uploadDate | date: 'MMM d' }}</span>
+                <span class="lesson-date">{{ l.uploadDate | date: 'mediumDate' }}</span>
               </span>
             </button>
             @if (active()?._id === l._id) {
-              <span class="playing">Playing</span>
+              <p-button icon="pi pi-play-circle" severity="success" [rounded]="true" [text]="true"
+                        styleClass="playing-pill" />
             }
           </li>
         }
       </ul>
-    </section>
+    </p-card>
   }
 
   @if (lessons().length === 0) {
-    <div class="empty">No lessons are available yet. Ask your teacher to publish them.</div>
+    <div class="state">
+      <i class="pi pi-video"></i>
+      <span>No lessons are available yet. Ask your teacher to publish them.</span>
+    </div>
   }
 }

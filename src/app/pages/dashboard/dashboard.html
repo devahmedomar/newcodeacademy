@@ -1,95 +1,103 @@
 @if (loading()) {
-  <div class="empty">Loading your dashboard…</div>
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>Loading your dashboard…</span></div>
 } @else if (error()) {
-  <div class="alert alert-error">{{ error() }}</div>
+  <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
   @if (profile(); as p) {
-    <h1>Welcome back, {{ p.user.name.split(' ')[0] }} 👋</h1>
-    <p style="color:var(--muted);font-size:0.9rem;margin-top:-0.2rem">Let's keep the streak going!</p>
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Welcome back, {{ p.user.name.split(' ')[0] }} 👋</h1>
+        <p class="page-subtitle">Let's keep the streak going!</p>
+      </div>
+    </div>
 
     @if (p.currentPayment && p.currentPayment.status !== 'paid') {
-      <div class="card pay-warning">
-        <div>
-          <strong>Payment due for {{ p.currentPayment.month }}</strong>
-          <p style="margin:0.3rem 0 0;font-size:0.9rem">
-            {{ p.currentPayment.amount }} EGP
-            <span [class]="'badge badge-' + p.currentPayment.status">{{ p.currentPayment.status }}</span>
-          </p>
+      <div class="payment-banner">
+        <i [class]="p.currentPayment.status === 'late' ? 'pi pi-exclamation-circle text-red' : 'pi pi-info-circle text-amber'"></i>
+        <div class="payment-banner-text">
+          <strong>Payment {{ p.currentPayment.status }} for {{ p.currentPayment.month }}</strong>
+          <span>{{ p.currentPayment.amount }} EGP due</span>
         </div>
-        <a class="btn btn-sm" routerLink="/payments">See details</a>
+        <p-tag [value]="p.currentPayment.status" [severity]="p.currentPayment.status === 'late' ? 'danger' : 'warn'" />
+        <p-button label="Details" severity="secondary" [text]="true" icon="pi pi-arrow-right" iconPos="right"
+                  styleClass="ml-auto" routerLink="/payments" />
       </div>
     }
 
-    <section class="card">
-      <div class="stat-row">
-        <div class="stat">
-          <strong style="font-size:1.2rem">{{ overallProgress() }}%</strong>
-          <span>Course progress</span>
+    <div class="stat-cards">
+      <p-card class="stat-card">
+        <div class="stat-stat">
+          <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-bolt"></i></span>
+          <div>
+            <strong class="stat-value">{{ overallProgress() }}%</strong>
+            <span class="stat-label">Course progress</span>
+          </div>
         </div>
-        <div class="stat">
-          <span class="streak-badge">🔥 {{ streak() }}</span>
-          <span>Lessons watched</span>
+      </p-card>
+      <p-card class="stat-card">
+        <div class="stat-stat">
+          <span class="stat-icon bg-amber-50 text-amber"><i class="pi pi-fire"></i></span>
+          <div>
+            <strong class="stat-value">{{ streak() }}</strong>
+            <span class="stat-label">Lessons watched</span>
+          </div>
         </div>
-        <div class="stat">
-          <strong style="font-size:1.2rem">{{ moduleCount() }}</strong>
-          <span>Modules</span>
+      </p-card>
+      <p-card class="stat-card">
+        <div class="stat-stat">
+          <span class="stat-icon bg-green-50 text-green"><i class="pi pi-list"></i></span>
+          <div>
+            <strong class="stat-value">{{ moduleCount() }}</strong>
+            <span class="stat-label">Modules</span>
+          </div>
         </div>
+      </p-card>
+    </div>
+
+    <p-card class="mb-4">
+      <div class="progress-head">
+        <span class="section-title">Course progress</span>
+        <span class="muted"> {{ progress.watchedIds().size }} of {{ p.lessons.length }} lessons completed</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-bar">
-          <div class="progress-bar-fill" [style.width.%]="overallProgress()"></div>
-        </div>
-      </div>
-      <p style="color:var(--muted);font-size:0.82rem;margin:0.5rem 0 0;text-align:center">
-        {{ progress.watchedIds().size }} of {{ p.lessons.length }} lessons completed
-      </p>
-    </section>
+      <p-progressbar [value]="overallProgress()" [showValue]="true" [style]="{ height: '10px' }" styleClass="mt-3" />
+    </p-card>
 
     @if (nextLesson(); as next) {
-      <section class="card next-lesson">
-        <div>
-          <span class="label">Next lesson</span>
-          <h2 style="margin-bottom:0.25rem">{{ next.title }}</h2>
-          <p style="margin:0;color:var(--muted);font-size:0.85rem">{{ next.module }}</p>
+      <p-card class="next-lesson mb-4">
+        <div class="next-lesson-body">
+          <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-play-circle"></i></span>
+          <div>
+            <span class="section-title">Next lesson</span>
+            <h3 class="mb-0">{{ next.title }}</h3>
+            <span class="muted" style="font-size:0.85rem">{{ next.module }}</span>
+          </div>
         </div>
-        <a class="btn" routerLink="/lessons">Watch →</a>
-      </section>
+        <p-button label="Watch now" icon="pi pi-play" iconPos="right" routerLink="/lessons" />
+      </p-card>
     }
 
-    <section class="card">
-      <div class="section-head">
-        <h2>Recent grades</h2>
-        <a routerLink="/grades">View all →</a>
+    <p-card>
+      <div class="progress-head mb-3">
+        <span class="section-title">Recent grades</span>
+        <a routerLink="/grades" class="see-all">View all <i class="pi pi-angle-right"></i></a>
       </div>
       @if (p.exams.length === 0 && p.homeworks.length === 0) {
-        <div class="empty">No grades yet.</div>
+        <div class="state">No grades yet — check back soon.</div>
       } @else {
-        <table>
-          <thead>
+        <p-table [value]="recentGrades(p)" [size]="'small'">
+          <ng-template pTemplate="header">
+            <tr><th>Title</th><th>Type</th><th>Score</th><th>%</th></tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
             <tr>
-              <th>Title</th>
-              <th>Subject</th>
-              <th>Score</th>
+              <td>{{ row.title }}</td>
+              <td><p-tag [value]="row.kind" [class]="row.kind === 'Exam' ? 'cf-tag-exam' : 'cf-tag-hw'" /></td>
+              <td>{{ row.grade }} / {{ row.max }}</td>
+              <td><strong [style.color]="row.color">{{ row.percent }}%</strong></td>
             </tr>
-          </thead>
-          <tbody>
-            @for (e of p.exams.slice(0, 3); track e._id) {
-              <tr>
-                <td>{{ e.title }}</td>
-                <td>{{ e.subject }}</td>
-                <td><strong>{{ percent(e.grade, e.maxGrade) }}%</strong></td>
-              </tr>
-            }
-            @for (h of p.homeworks.slice(0, 3); track h._id) {
-              <tr>
-                <td>{{ h.title }} <span style="color:var(--muted)">(hw)</span></td>
-                <td>Homework</td>
-                <td><strong>{{ percent(h.points, h.maxPoints) }}%</strong></td>
-              </tr>
-            }
-          </tbody>
-        </table>
+          </ng-template>
+        </p-table>
       }
-    </section>
+    </p-card>
   }
 }

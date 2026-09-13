@@ -1,12 +1,17 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ProgressBar } from 'primeng/progressbar';
+import { Tag } from 'primeng/tag';
+import { Button } from 'primeng/button';
+import { Card } from 'primeng/card';
+import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { ProgressService } from '../../services/progress.service';
 import { Profile } from '../../models';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, ProgressBar, Tag, Button, Card, TableModule],
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
@@ -49,5 +54,45 @@ export class Dashboard {
 
   moduleCount() {
     return new Set((this.profile()?.lessons ?? []).map((l) => l.module)).size;
+  }
+
+  recentGrades(p: Profile) {
+    const rows: Array<{
+      title: string;
+      kind: string;
+      grade: number;
+      max: number;
+      percent: number;
+      color: string;
+    }> = [];
+    for (const e of p.exams) {
+      const percent = this.percent(e.grade, e.maxGrade);
+      rows.push({
+        title: e.title,
+        kind: 'Exam',
+        grade: e.grade,
+        max: e.maxGrade,
+        percent,
+        color: this.gradeColor(percent),
+      });
+    }
+    for (const h of p.homeworks) {
+      const percent = this.percent(h.points, h.maxPoints);
+      rows.push({
+        title: h.title,
+        kind: 'Homework',
+        grade: h.points,
+        max: h.maxPoints,
+        percent,
+        color: this.gradeColor(percent),
+      });
+    }
+    return rows.slice(0, 6);
+  }
+
+  gradeColor(p: number) {
+    if (p >= 85) return 'var(--p-green-600)';
+    if (p >= 70) return 'var(--p-amber-600)';
+    return 'var(--p-red-500)';
   }
 }

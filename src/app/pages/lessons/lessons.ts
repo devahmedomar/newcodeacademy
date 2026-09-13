@@ -1,5 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Card } from 'primeng/card';
+import { Tag } from 'primeng/tag';
+import { Button } from 'primeng/button';
+import { ProgressBar } from 'primeng/progressbar';
 import { PortalService } from '../../services/portal.service';
 import { ProgressService } from '../../services/progress.service';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
@@ -7,7 +11,7 @@ import { Lesson } from '../../models';
 
 @Component({
   selector: 'app-lessons',
-  imports: [DatePipe, SafeUrlPipe],
+  imports: [DatePipe, Card, Tag, Button, ProgressBar, SafeUrlPipe],
   styleUrl: './lessons.css',
   templateUrl: './lessons.html',
 })
@@ -56,7 +60,11 @@ export class Lessons {
   }
 
   open(l: Lesson) {
+    if (this.active()?._id === l._id) return;
     this.active.set(l);
+  }
+
+  toggleWatched(l: Lesson) {
     this.progress.toggle(l._id);
     this.active.set({ ...l });
   }

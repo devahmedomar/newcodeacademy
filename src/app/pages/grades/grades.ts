@@ -1,11 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Card } from 'primeng/card';
+import { Tag } from 'primeng/tag';
+import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { Profile } from '../../models';
 
 @Component({
   selector: 'app-grades',
-  imports: [DatePipe],
+  imports: [DatePipe, Card, Tag, TableModule],
   styleUrl: './grades.css',
   templateUrl: './grades.html',
 })
@@ -45,8 +48,14 @@ export class Grades {
   }
 
   gradeColor(p: number) {
-    if (p >= 85) return 'var(--success)';
-    if (p >= 70) return 'var(--warning)';
-    return 'var(--danger)';
+    if (p >= 85) return 'var(--p-green-600)';
+    if (p >= 70) return 'var(--p-amber-600)';
+    return 'var(--p-red-500)';
+  }
+
+  gradeSeverity(p: number): 'success' | 'warn' | 'danger' {
+    if (p >= 85) return 'success';
+    if (p >= 70) return 'warn';
+    return 'danger';
   }
 }

@@ -1,11 +1,17 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { InputText } from 'primeng/inputtext';
+import { Password } from 'primeng/password';
+import { Button } from 'primeng/button';
+import { Card } from 'primeng/card';
+import { FloatLabel } from 'primeng/floatlabel';
+import { Message } from 'primeng/message';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, InputText, Password, Button, Card, FloatLabel, Message],
   styleUrl: './login.css',
   templateUrl: './login.html',
 })

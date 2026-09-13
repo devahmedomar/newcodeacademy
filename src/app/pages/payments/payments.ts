@@ -1,11 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Card } from 'primeng/card';
+import { Tag } from 'primeng/tag';
+import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { Payment } from '../../models';
 
 @Component({
   selector: 'app-payments',
-  imports: [DatePipe],
+  imports: [DatePipe, Card, Tag, TableModule],
   styleUrl: './payments.css',
   templateUrl: './payments.html',
 })
@@ -29,5 +32,11 @@ export class Payments {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  severity(status: string): 'success' | 'warn' | 'danger' | 'secondary' {
+    if (status === 'paid') return 'success';
+    if (status === 'late') return 'danger';
+    return 'warn';
   }
 }
