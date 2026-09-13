@@ -7,6 +7,10 @@
   margin-bottom: 1.25rem;
 }
 
+.status-banner .p-tag {
+  margin-inline-start: auto;
+}
+
 .status-banner .status-icon {
   width: 44px;
   height: 44px;

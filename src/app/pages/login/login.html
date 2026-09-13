@@ -1,15 +1,21 @@
 <div class="auth-wrap">
+  <div class="lang-corner">
+    <p-button [text]="true" [rounded]="true" icon="pi pi-globe"
+              [label]="i18n.lang() === 'ar' ? 'EN' : 'العربية'"
+              [pTooltip]="i18n.t('app.switchLang')" (onClick)="i18n.toggle()" />
+  </div>
+
   <div class="auth-aside">
     <div class="brand">
       <i class="pi pi-graduation-cap"></i>
       <span>New Code Academy</span>
     </div>
-    <h1>Your learning, all in one place.</h1>
-    <p>Watch video lessons, track your progress, check your grades, and manage your payments — from any device.</p>
+    <h1>{{ i18n.t('login.tagline') }}</h1>
+    <p>{{ i18n.t('login.sub') }}</p>
     <ul class="feature-list">
-      <li><i class="pi pi-video"></i> Structured video lessons per module</li>
-      <li><i class="pi pi-chart-bar"></i> Real-time grade tracking</li>
-      <li><i class="pi pi-bolt"></i> Progress, streaks, and next-lesson picks</li>
+      <li><i class="pi pi-video"></i> {{ i18n.t('login.f1') }}</li>
+      <li><i class="pi pi-chart-bar"></i> {{ i18n.t('login.f2') }}</li>
+      <li><i class="pi pi-bolt"></i> {{ i18n.t('login.f3') }}</li>
     </ul>
   </div>
 
@@ -17,8 +23,8 @@
     <p-card class="auth-card">
       <ng-template #title>
         <div class="auth-card-title">
-          <h1>Student sign in</h1>
-          <p>Welcome back! Enter your details to continue.</p>
+          <h1>{{ i18n.t('login.title') }}</h1>
+          <p>{{ i18n.t('login.welcome') }}</p>
         </div>
       </ng-template>
       <form (ngSubmit)="submit()">
@@ -29,18 +35,18 @@
           <p-floatlabel>
             <input pInputText id="email" type="email" [(ngModel)]="email" name="email" required
                    autocomplete="email" class="w-full" />
-            <label for="email">Email</label>
+            <label for="email">{{ i18n.t('login.email') }}</label>
           </p-floatlabel>
         </div>
         <div class="field">
           <p-floatlabel>
             <p-password id="password" [(ngModel)]="password" name="password" required
                         [feedback]="false" [toggleMask]="true" autocomplete="current-password" class="w-full" />
-            <label for="password">Password</label>
+            <label for="password">{{ i18n.t('login.password') }}</label>
           </p-floatlabel>
         </div>
-        <p-button type="submit" [label]="loading ? 'Signing in…' : 'Sign in'" [loading]="loading"
-                  icon="pi pi-arrow-right" iconPos="right" styleClass="w-full" />
+        <p-button type="submit" [label]="loading ? i18n.t('login.signingin') : i18n.t('login.signin')"
+                  [loading]="loading" [icon]="arrowIcon()" iconPos="right" styleClass="w-full" />
       </form>
       </p-card>
   </div>

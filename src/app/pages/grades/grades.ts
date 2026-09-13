@@ -4,6 +4,7 @@ import { Card } from 'primeng/card';
 import { Tag } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
+import { I18nService } from '../../services/i18n.service';
 import { Profile } from '../../models';
 
 @Component({
@@ -14,6 +15,7 @@ import { Profile } from '../../models';
 })
 export class Grades {
   private portal = inject(PortalService);
+  i18n = inject(I18nService);
 
   profile = signal<Profile | null>(null);
   loading = signal(true);

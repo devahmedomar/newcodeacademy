@@ -3,28 +3,31 @@
     <div class="topbar-inner">
       <div class="brand">
         <i class="pi pi-graduation-cap brand-icon"></i>
-        <span>New Code Academy</span>
+        <span class="brand-name">New Code Academy</span>
       </div>
       <nav class="topnav">
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="pi pi-home"></i><span>Home</span>
+          <i class="pi pi-home"></i><span>{{ i18n.t('nav.home') }}</span>
         </a>
         <a routerLink="/lessons" routerLinkActive="active">
-          <i class="pi pi-video"></i><span>Lessons</span>
+          <i class="pi pi-video"></i><span>{{ i18n.t('nav.lessons') }}</span>
         </a>
         <a routerLink="/grades" routerLinkActive="active">
-          <i class="pi pi-chart-bar"></i><span>Grades</span>
+          <i class="pi pi-chart-bar"></i><span>{{ i18n.t('nav.grades') }}</span>
         </a>
         <a routerLink="/payments" routerLinkActive="active">
-          <i class="pi pi-credit-card"></i><span>Payments</span>
+          <i class="pi pi-credit-card"></i><span>{{ i18n.t('nav.payments') }}</span>
         </a>
       </nav>
       <div class="user-row">
         <span class="user-name">{{ auth.user()?.name }}</span>
+        <p-button class="lang-btn" [text]="true" [rounded]="true" [label]="langToggleLabel()"
+                  styleClass="lang-btn-inner" tooltipPos="left" [pTooltip]="i18n.t('app.switchLang')"
+                  (onClick)="i18n.toggle()" />
         <p-button [text]="true" [rounded]="true" [icon]="theme.isDark() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
-                  tooltipPos="left" pTooltip="Toggle dark mode" (onClick)="theme.toggle()" />
+                  tooltipPos="left" [pTooltip]="i18n.t('app.toggleDark')" (onClick)="theme.toggle()" />
         <p-button [text]="true" [rounded]="true" icon="pi pi-sign-out" styleClass="logout-btn"
-                  tooltipPos="left" pTooltip="Log out" (onClick)="logout()" />
+                  tooltipPos="left" [pTooltip]="i18n.t('app.logout')" (onClick)="logout()" />
       </div>
     </div>
   </header>
@@ -35,16 +38,16 @@
 @if (auth.isStudent()) {
   <nav class="bottom-nav">
     <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      <i class="pi pi-home"></i><span>Home</span>
+      <i class="pi pi-home"></i><span>{{ i18n.t('nav.home') }}</span>
     </a>
     <a routerLink="/lessons" routerLinkActive="active">
-      <i class="pi pi-video"></i><span>Lessons</span>
+      <i class="pi pi-video"></i><span>{{ i18n.t('nav.lessons') }}</span>
     </a>
     <a routerLink="/grades" routerLinkActive="active">
-      <i class="pi pi-chart-bar"></i><span>Grades</span>
+      <i class="pi pi-chart-bar"></i><span>{{ i18n.t('nav.grades') }}</span>
     </a>
     <a routerLink="/payments" routerLinkActive="active">
-      <i class="pi pi-credit-card"></i><span>Payments</span>
+      <i class="pi pi-credit-card"></i><span>{{ i18n.t('nav.payments') }}</span>
     </a>
   </nav>
 }

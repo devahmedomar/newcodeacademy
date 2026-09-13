@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
+import { I18nService } from './services/i18n.service';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +15,14 @@ import { ThemeService } from './services/theme.service';
 export class App {
   constructor(public auth: AuthService, public theme: ThemeService) {}
 
+  i18n = inject(I18nService);
+
   logout() {
     this.auth.logout();
     window.location.href = '/login';
+  }
+
+  langToggleLabel() {
+    return this.i18n.lang() === 'ar' ? 'EN' : 'العربية';
   }
 }

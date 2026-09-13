@@ -1,13 +1,13 @@
 @if (loading()) {
-  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>Loading grades…</span></div>
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('grades.loading') }}</span></div>
 } @else if (error()) {
   <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
   @if (profile(); as p) {
     <div class="page-header">
       <div>
-        <h1 class="page-title">Grades</h1>
-        <p class="page-subtitle">Your exam and homework performance at a glance.</p>
+        <h1 class="page-title">{{ i18n.t('nav.grades') }}</h1>
+        <p class="page-subtitle">{{ i18n.t('grades.subtitle') }}</p>
       </div>
     </div>
 
@@ -16,7 +16,7 @@
         <div class="avg-inner">
           <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-pencil"></i></span>
           <div>
-            <span class="avg-label">Exams average</span>
+            <span class="avg-label">{{ i18n.t('grades.examsAvg') }}</span>
             <strong class="avg-value" [style.color]="averageExam() !== null ? gradeColor(averageExam()!) : 'var(--p-text-muted-color)'">
               {{ averageExam() ?? '—' }}%
             </strong>
@@ -27,7 +27,7 @@
         <div class="avg-inner">
           <span class="stat-icon bg-green-50 text-green"><i class="pi pi-book"></i></span>
           <div>
-            <span class="avg-label">Homework average</span>
+            <span class="avg-label">{{ i18n.t('grades.homeworkAvg') }}</span>
             <strong class="avg-value" [style.color]="averageHw() !== null ? gradeColor(averageHw()!) : 'var(--p-text-muted-color)'">
               {{ averageHw() ?? '—' }}%
             </strong>
@@ -38,14 +38,14 @@
 
     <p-card>
       <div class="card-head">
-        <span class="section-title">Exams</span>
+        <span class="section-title">{{ i18n.t('grades.exams') }}</span>
       </div>
       @if (p.exams.length === 0) {
-        <div class="state">No exams yet.</div>
+        <div class="state">{{ i18n.t('grades.noExams') }}</div>
       } @else {
         <p-table [value]="p.exams" [size]="'small'">
           <ng-template #header>
-            <tr><th>Title</th><th>Subject</th><th>Score</th><th>%</th><th>Date</th></tr>
+            <tr><th>{{ i18n.t('tbl.title') }}</th><th>{{ i18n.t('tbl.subject') }}</th><th>{{ i18n.t('tbl.score') }}</th><th>%</th><th>{{ i18n.t('tbl.date') }}</th></tr>
           </ng-template>
           <ng-template #body let-e>
             <tr>
@@ -53,7 +53,7 @@
               <td>{{ e.subject }}</td>
               <td>{{ e.grade }} / {{ e.maxGrade }}</td>
               <td><p-tag [value]="percent(e.grade, e.maxGrade) + '%'" [severity]="gradeSeverity(percent(e.grade, e.maxGrade))" /></td>
-              <td>{{ e.date | date: 'mediumDate' }}</td>
+              <td>{{ e.date | date: 'mediumDate':undefined:i18n.lang() }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -62,14 +62,14 @@
 
     <p-card>
       <div class="card-head">
-        <span class="section-title">Homework</span>
+        <span class="section-title">{{ i18n.t('grades.homework') }}</span>
       </div>
       @if (p.homeworks.length === 0) {
-        <div class="state">No homework yet.</div>
+        <div class="state">{{ i18n.t('grades.noHomework') }}</div>
       } @else {
         <p-table [value]="p.homeworks" [size]="'small'">
           <ng-template #header>
-            <tr><th>Title</th><th>Points</th><th>%</th><th>Feedback</th></tr>
+            <tr><th>{{ i18n.t('tbl.title') }}</th><th>{{ i18n.t('tbl.points') }}</th><th>%</th><th>{{ i18n.t('tbl.feedback') }}</th></tr>
           </ng-template>
           <ng-template #body let-h>
             <tr>

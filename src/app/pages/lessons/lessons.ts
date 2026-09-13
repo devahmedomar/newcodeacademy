@@ -6,6 +6,7 @@ import { Button } from 'primeng/button';
 import { ProgressBar } from 'primeng/progressbar';
 import { PortalService } from '../../services/portal.service';
 import { ProgressService } from '../../services/progress.service';
+import { I18nService } from '../../services/i18n.service';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
 import { Lesson } from '../../models';
 
@@ -18,6 +19,7 @@ import { Lesson } from '../../models';
 export class Lessons {
   private portal = inject(PortalService);
   progress = inject(ProgressService);
+  i18n = inject(I18nService);
 
   lessons = signal<Lesson[]>([]);
   active = signal<Lesson | null>(null);

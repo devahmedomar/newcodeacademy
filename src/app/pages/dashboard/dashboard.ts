@@ -7,6 +7,7 @@ import { Card } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { ProgressService } from '../../services/progress.service';
+import { I18nService } from '../../services/i18n.service';
 import { Profile } from '../../models';
 
 @Component({
@@ -18,6 +19,7 @@ import { Profile } from '../../models';
 export class Dashboard {
   private portal = inject(PortalService);
   progress = inject(ProgressService);
+  i18n = inject(I18nService);
 
   profile = signal<Profile | null>(null);
   loading = signal(true);
@@ -94,5 +96,9 @@ export class Dashboard {
     if (p >= 85) return 'var(--p-green-600)';
     if (p >= 70) return 'var(--p-amber-600)';
     return 'var(--p-red-500)';
+  }
+
+  arrowIcon() {
+    return this.i18n.dir() === 'rtl' ? 'pi pi-arrow-left' : 'pi pi-arrow-right';
   }
 }

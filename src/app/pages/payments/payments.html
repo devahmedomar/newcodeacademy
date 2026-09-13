@@ -1,12 +1,12 @@
 @if (loading()) {
-  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>Loading payments…</span></div>
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('payments.loading') }}</span></div>
 } @else if (error()) {
   <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
   <div class="page-header">
     <div>
-      <h1 class="page-title">Payments</h1>
-      <p class="page-subtitle">Tuition status and payment history.</p>
+      <h1 class="page-title">{{ i18n.t('nav.payments') }}</h1>
+      <p class="page-subtitle">{{ i18n.t('payments.subtitle') }}</p>
     </div>
   </div>
 
@@ -15,48 +15,55 @@
       <div class="status-banner paid">
         <span class="status-icon bg-green-50 text-green"><i class="pi pi-check"></i></span>
         <div class="status-body">
-          <strong>All set for {{ cp.month }} 🎉</strong>
-          <span>{{ cp.amount }} EGP paid{{ cp.paidOn ? ' on ' + (cp.paidOn | date: 'longDate') : '' }}</span>
+          <strong>{{ i18n.t('payments.allSet', { month: cp.month }) }}</strong>
+          <span>
+            {{
+              i18n.t(cp.paidOn ? 'payments.paidOnDate' : 'payments.paidOnNoDate', {
+                amount: cp.amount,
+                date: cp.paidOn ? ((cp.paidOn | date: 'longDate':undefined:i18n.lang()) ?? '') : '',
+              })
+            }}
+          </span>
         </div>
-        <p-tag value="Paid" severity="success" class="ml-auto" />
+        <p-tag [value]="i18n.t('payStatus.paid')" severity="success" class="ml-auto" />
       </div>
     } @else {
       <div class="status-banner due">
         <span class="status-icon bg-amber-50 text-amber"><i class="pi pi-wallet"></i></span>
         <div class="status-body">
-          <strong>Payment {{ cp.status }} for {{ cp.month }}</strong>
-          <span>{{ cp.amount }} EGP — pay in cash to your teacher to get marked as paid.</span>
+          <strong>{{ i18n.t('payments.dueLine', { status: i18n.payStatus(cp.status), month: cp.month }) }}</strong>
+          <span>{{ i18n.t('payments.cash', { amount: cp.amount }) }}</span>
         </div>
-        <p-tag [value]="cp.status" [severity]="severity(cp.status)" class="ml-auto" />
+        <p-tag [value]="i18n.payStatus(cp.status)" [severity]="severity(cp.status)" class="ml-auto" />
       </div>
     }
   } @else {
     <div class="status-banner neutral">
       <span class="status-icon bg-blue-50 text-primary"><i class="pi pi-info"></i></span>
       <div class="status-body">
-        <strong>No payment record for {{ currentMonth() }}</strong>
-        <span>Ask your teacher if you have any questions.</span>
+        <strong>{{ i18n.t('payments.noRecord', { month: currentMonth() }) }}</strong>
+        <span>{{ i18n.t('payments.ask') }}</span>
       </div>
     </div>
   }
 
   <p-card>
     <div class="card-head">
-      <span class="section-title">History</span>
+      <span class="section-title">{{ i18n.t('payments.history') }}</span>
     </div>
     @if (payments().length === 0) {
-      <div class="state">No payment history yet.</div>
+      <div class="state">{{ i18n.t('payments.noHistory') }}</div>
     } @else {
       <p-table [value]="payments()" [size]="'small'">
         <ng-template #header>
-          <tr><th>Month</th><th>Amount</th><th>Status</th><th>Paid on</th></tr>
+          <tr><th>{{ i18n.t('tbl.month') }}</th><th>{{ i18n.t('tbl.amount') }}</th><th>{{ i18n.t('tbl.status') }}</th><th>{{ i18n.t('tbl.paidOn') }}</th></tr>
         </ng-template>
         <ng-template #body let-p>
           <tr>
             <td><strong>{{ p.month }}</strong></td>
-            <td>{{ p.amount }} EGP</td>
-            <td><p-tag [value]="p.status" [severity]="severity(p.status)" /></td>
-            <td>{{ p.paidOn ? (p.paidOn | date: 'longDate') : '—' }}</td>
+            <td>{{ p.amount }} {{ i18n.t('egp') }}</td>
+            <td><p-tag [value]="i18n.payStatus(p.status)" [severity]="severity(p.status)" /></td>
+            <td>{{ p.paidOn ? (p.paidOn | date: 'longDate':undefined:i18n.lang()) : '—' }}</td>
           </tr>
         </ng-template>
       </p-table>
