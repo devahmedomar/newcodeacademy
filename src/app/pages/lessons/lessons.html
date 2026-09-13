@@ -1,0 +1,64 @@
+@if (loading()) {
+  <div class="empty">Loading lessons…</div>
+} @else if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+} @else {
+  @if (active(); as current) {
+    <section class="card player-card">
+      <div class="iframe-wrap">
+        <iframe [src]="'https://youtube.com/embed/' + current.youtubeVideoId | safeUrl"
+                title="{{ current.title }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <div class="player-meta">
+        <span class="streak-badge">🔥 {{ progress.watchedCount(lessons()) }} watched</span>
+        <span class="label" style="margin:0">{{ current.module }}</span>
+        <h2 style="margin:0.15rem 0 0">{{ current.title }}</h2>
+        @if (current.description) {
+          <p style="color:var(--muted);margin:0.4rem 0 0">{{ current.description }}</p>
+        }
+      </div>
+    </section>
+  }
+
+  @for (module of modules(); track module) {
+    <section class="card">
+      <div class="module-head">
+        <h2>{{ module }}</h2>
+        <div class="module-progress">
+          <div class="progress-bar">
+            <div class="progress-bar-fill" [style.width.%]="moduleProgress(module).percent"></div>
+          </div>
+          <span class="module-count">{{ moduleProgress(module).count }}/{{ moduleProgress(module).total }}</span>
+        </div>
+      </div>
+      <ul class="lesson-list">
+        @for (l of byModule(module); track l._id) {
+          <li>
+            <div class="check" [class.done]="progress.isWatched(l._id)" (click)="open(l)">
+              @if (progress.isWatched(l._id)) {
+                <span>✓</span>
+              }
+            </div>
+            <button class="lesson-btn" (click)="open(l)">
+              <span class="lesson-order">{{ l.order }}</span>
+              <span>
+                <strong>{{ l.title }}</strong>
+                <br />
+                <span style="color:var(--muted);font-size:0.78rem">{{ l.uploadDate | date: 'MMM d' }}</span>
+              </span>
+            </button>
+            @if (active()?._id === l._id) {
+              <span class="playing">Playing</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (lessons().length === 0) {
+    <div class="empty">No lessons are available yet. Ask your teacher to publish them.</div>
+  }
+}

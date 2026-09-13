@@ -1,0 +1,88 @@
+@if (loading()) {
+  <div class="empty">Loading grades…</div>
+} @else if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+} @else {
+  @if (profile(); as p) {
+    <h1>Grades</h1>
+
+    <div class="card">
+      <div class="avg-row">
+        <div class="avg-box">
+          <span class="avg-label">Exams average</span>
+          <strong [style.color]="averageExam() !== null ? gradeColor(averageExam()!) : 'var(--muted)'" style="font-size:1.8rem">
+            {{ averageExam() ?? '—' }}%
+          </strong>
+        </div>
+        <div class="avg-box">
+          <span class="avg-label">Homework average</span>
+          <strong [style.color]="averageHw() !== null ? gradeColor(averageHw()!) : 'var(--muted)'" style="font-size:1.8rem">
+            {{ averageHw() ?? '—' }}%
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Exams</h2>
+      @if (p.exams.length === 0) {
+        <div class="empty">No exams yet.</div>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Subject</th>
+              <th>Score</th>
+              <th>%</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of p.exams; track e._id) {
+              <tr>
+                <td>{{ e.title }}</td>
+                <td>{{ e.subject }}</td>
+                <td>{{ e.grade }} / {{ e.maxGrade }}</td>
+                <td>
+                  <strong [style.color]="gradeColor(percent(e.grade, e.maxGrade))">{{ percent(e.grade, e.maxGrade) }}%</strong>
+                </td>
+                <td>{{ e.date | date: 'shortDate' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+
+    <section class="card">
+      <h2>Homework</h2>
+      @if (p.homeworks.length === 0) {
+        <div class="empty">No homework yet.</div>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Points</th>
+              <th>%</th>
+              <th>Feedback</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (h of p.homeworks; track h._id) {
+              <tr>
+                <td>{{ h.title }}</td>
+                <td>{{ h.points }} / {{ h.maxPoints }}</td>
+                <td>
+                  <strong [style.color]="gradeColor(percent(h.points, h.maxPoints))">{{ percent(h.points, h.maxPoints) }}%</strong>
+                </td>
+                <td>{{ h.feedback || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+}

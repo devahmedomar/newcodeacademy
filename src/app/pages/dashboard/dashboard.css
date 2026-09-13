@@ -1,0 +1,57 @@
+.pay-warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+.stat span:last-child {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.progress-track {
+  display: flex;
+}
+
+.next-lesson {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: linear-gradient(135deg, #eff6ff, #fdf4ff);
+  border-color: #bfdbfe;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.section-head a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

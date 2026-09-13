@@ -1,0 +1,60 @@
+@if (loading()) {
+  <div class="empty">Loading payments…</div>
+} @else if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+} @else {
+  <h1>Payments</h1>
+
+  @if (current(); as cp) {
+    @if (cp.status === 'paid') {
+      <div class="card pay-paid">
+        <strong>All set for {{ cp.month }} 🎉</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.9rem">
+          {{ cp.amount }} EGP paid {{ cp.paidOn ? 'on ' + (cp.paidOn | date: 'shortDate') : '' }}
+        </p>
+      </div>
+    } @else {
+      <div class="card pay-due">
+        <strong>Payment due for {{ cp.month }}</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.9rem">
+          {{ cp.amount }} EGP — <span [class]="'badge badge-' + cp.status">{{ cp.status }}</span>
+        </p>
+        <p style="margin:0.5rem 0 0;font-size:0.82rem;color:var(--muted)">
+          Pay in cash to your teacher to get your status marked as paid.
+        </p>
+      </div>
+    }
+  } @else {
+    <div class="card">
+      <div class="empty">No payment record for {{ currentMonth() }} yet. Ask your teacher if you have any questions.</div>
+    </div>
+  }
+
+  <section class="card">
+    <h2>History</h2>
+    @if (payments().length === 0) {
+      <div class="empty">No payment history yet.</div>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Paid on</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of payments(); track p._id) {
+            <tr>
+              <td><strong>{{ p.month }}</strong></td>
+              <td>{{ p.amount }} EGP</td>
+              <td><span [class]="'badge badge-' + p.status">{{ p.status }}</span></td>
+              <td>{{ p.paidOn ? (p.paidOn | date: 'shortDate') : '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+}

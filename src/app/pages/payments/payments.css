@@ -1,0 +1,15 @@
+.pay-paid {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pay-due {
+  background: #fffbeb;
+  border-color: #fde68a;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}

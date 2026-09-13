@@ -1,0 +1,95 @@
+@if (loading()) {
+  <div class="empty">Loading your dashboard…</div>
+} @else if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+} @else {
+  @if (profile(); as p) {
+    <h1>Welcome back, {{ p.user.name.split(' ')[0] }} 👋</h1>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:-0.2rem">Let's keep the streak going!</p>
+
+    @if (p.currentPayment && p.currentPayment.status !== 'paid') {
+      <div class="card pay-warning">
+        <div>
+          <strong>Payment due for {{ p.currentPayment.month }}</strong>
+          <p style="margin:0.3rem 0 0;font-size:0.9rem">
+            {{ p.currentPayment.amount }} EGP
+            <span [class]="'badge badge-' + p.currentPayment.status">{{ p.currentPayment.status }}</span>
+          </p>
+        </div>
+        <a class="btn btn-sm" routerLink="/payments">See details</a>
+      </div>
+    }
+
+    <section class="card">
+      <div class="stat-row">
+        <div class="stat">
+          <strong style="font-size:1.2rem">{{ overallProgress() }}%</strong>
+          <span>Course progress</span>
+        </div>
+        <div class="stat">
+          <span class="streak-badge">🔥 {{ streak() }}</span>
+          <span>Lessons watched</span>
+        </div>
+        <div class="stat">
+          <strong style="font-size:1.2rem">{{ moduleCount() }}</strong>
+          <span>Modules</span>
+        </div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" [style.width.%]="overallProgress()"></div>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:0.82rem;margin:0.5rem 0 0;text-align:center">
+        {{ progress.watchedIds().size }} of {{ p.lessons.length }} lessons completed
+      </p>
+    </section>
+
+    @if (nextLesson(); as next) {
+      <section class="card next-lesson">
+        <div>
+          <span class="label">Next lesson</span>
+          <h2 style="margin-bottom:0.25rem">{{ next.title }}</h2>
+          <p style="margin:0;color:var(--muted);font-size:0.85rem">{{ next.module }}</p>
+        </div>
+        <a class="btn" routerLink="/lessons">Watch →</a>
+      </section>
+    }
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Recent grades</h2>
+        <a routerLink="/grades">View all →</a>
+      </div>
+      @if (p.exams.length === 0 && p.homeworks.length === 0) {
+        <div class="empty">No grades yet.</div>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Subject</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of p.exams.slice(0, 3); track e._id) {
+              <tr>
+                <td>{{ e.title }}</td>
+                <td>{{ e.subject }}</td>
+                <td><strong>{{ percent(e.grade, e.maxGrade) }}%</strong></td>
+              </tr>
+            }
+            @for (h of p.homeworks.slice(0, 3); track h._id) {
+              <tr>
+                <td>{{ h.title }} <span style="color:var(--muted)">(hw)</span></td>
+                <td>Homework</td>
+                <td><strong>{{ percent(h.points, h.maxPoints) }}%</strong></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+}

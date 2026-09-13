@@ -1,0 +1,30 @@
+.avg-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.avg-box {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.avg-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 480px) {
+  .avg-row {
+    flex-direction: column;
+  }
+}
