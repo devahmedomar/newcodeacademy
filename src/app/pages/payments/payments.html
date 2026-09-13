@@ -48,10 +48,10 @@
       <div class="state">No payment history yet.</div>
     } @else {
       <p-table [value]="payments()" [size]="'small'">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr><th>Month</th><th>Amount</th><th>Status</th><th>Paid on</th></tr>
         </ng-template>
-        <ng-template pTemplate="body" let-p>
+        <ng-template #body let-p>
           <tr>
             <td><strong>{{ p.month }}</strong></td>
             <td>{{ p.amount }} EGP</td>

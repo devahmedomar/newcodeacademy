@@ -85,10 +85,10 @@
         <div class="state">No grades yet — check back soon.</div>
       } @else {
         <p-table [value]="recentGrades(p)" [size]="'small'">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr><th>Title</th><th>Type</th><th>Score</th><th>%</th></tr>
           </ng-template>
-          <ng-template pTemplate="body" let-row>
+          <ng-template #body let-row>
             <tr>
               <td>{{ row.title }}</td>
               <td><p-tag [value]="row.kind" [class]="row.kind === 'Exam' ? 'cf-tag-exam' : 'cf-tag-hw'" /></td>
