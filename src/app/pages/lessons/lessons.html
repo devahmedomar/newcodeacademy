@@ -49,6 +49,16 @@
               <p-tag [value]="current.module" severity="secondary" />
               <h2 class="player-title mb-0">{{ current.title }}</h2>
             </div>
+            <div class="quiz-stats">
+              @if (bestScore() > 0) {
+                <span class="attempt-chip"><i class="pi pi-star"></i>
+                  {{ i18n.t('quiz.bestScore', { s: bestScore(), t: result()?.total ?? quiz()?.questions.length ?? 0, p: bestPercent() }) }}
+                </span>
+              }
+              @if (!locked() && !result()) {
+                <span class="attempt-chip">{{ i18n.t('quiz.attemptsLeft', { n: attemptsLeft() }) }}</span>
+              }
+            </div>
             <p-button icon="pi pi-arrow-left" [label]="i18n.t('lessons.backToLesson')" severity="secondary"
                       [text]="true" size="small" (onClick)="closeQuiz()" />
           </div>
@@ -57,6 +67,17 @@
             <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('quiz.loading') }}</span></div>
           } @else if (quizError()) {
             <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ quizError() }}</span></div>
+            <div class="quiz-actions">
+              <p-button [label]="i18n.t('lessons.backToLesson')" severity="secondary" (onClick)="closeQuiz()" />
+            </div>
+          } @else if (locked()) {
+            <div class="state">
+              <i class="pi pi-lock"></i>
+              <span>{{ i18n.t('quiz.noAttemptsLeft') }}</span>
+              @if (bestScore() > 0) {
+                <strong>{{ i18n.t('quiz.bestScore', { s: bestScore(), t: quiz()?.questions.length ?? 0, p: bestPercent() }) }}</strong>
+              }
+            </div>
             <div class="quiz-actions">
               <p-button [label]="i18n.t('lessons.backToLesson')" severity="secondary" (onClick)="closeQuiz()" />
             </div>
@@ -69,6 +90,13 @@
                   <span>{{ r.percent >= 50 ? i18n.t('quiz.pass') : i18n.t('quiz.fail') }}</span>
                 </div>
               </div>
+
+              @if (r.bestScore !== r.score) {
+                <div class="best-banner">
+                  <i class="pi pi-star"></i>
+                  <span>{{ i18n.t('quiz.bestScore', { s: r.bestScore, t: r.total, p: r.bestPercent }) }}</span>
+                </div>
+              }
 
               <div class="review-list">
                 @for (res of r.results; track $index) {
@@ -96,8 +124,12 @@
               </div>
 
               <div class="quiz-actions">
-                <p-button [label]="i18n.t('quiz.tryAgain')" icon="pi pi-replay" severity="secondary" [outlined]="true"
-                          (onClick)="restartQuiz()" />
+                @if (r.attemptsLeft > 0) {
+                  <p-button [label]="i18n.t('quiz.tryAgain')" icon="pi pi-replay" severity="secondary" [outlined]="true"
+                            (onClick)="restartQuiz()" />
+                } @else {
+                  <p-tag severity="secondary" [value]="i18n.t('quiz.noAttemptsLeft')" />
+                }
                 <p-button [label]="i18n.t('lessons.backToLesson')" [icon]="arrowIcon()"
                           (onClick)="closeQuiz()" />
               </div>

@@ -51,6 +51,9 @@ export interface QuizQuestion {
 export interface QuizForStudent {
   _id: string;
   lessonId: string;
+  attemptsLeft: number;
+  bestScore: number;
+  bestPercent: number;
   questions: QuizQuestion[];
 }
 
@@ -67,6 +70,9 @@ export interface QuizAttemptResult {
   score: number;
   total: number;
   percent: number;
+  attemptsLeft: number;
+  bestScore: number;
+  bestPercent: number;
   results: QuizQuestionResult[];
 }
 
@@ -82,6 +88,18 @@ export interface QuizAttemptSummary {
   createdAt: string;
 }
 
+export interface PointsBucket {
+  earned: number;
+  possible: number;
+}
+
+export interface PointsSummary {
+  total: PointsBucket & { percent: number };
+  quizzes: PointsBucket;
+  homeworks: PointsBucket;
+  exams: PointsBucket;
+}
+
 export interface Profile {
   user: {
     id: string;
@@ -94,6 +112,8 @@ export interface Profile {
   payments: Payment[];
   lessons: Lesson[];
   quizAttempts: QuizAttemptSummary[];
+  quizBestAttempts: QuizAttemptSummary[];
+  points: PointsSummary;
   currentMonth: string;
   currentPayment: Payment | null;
 }

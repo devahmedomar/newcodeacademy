@@ -104,6 +104,16 @@ const AR: Record<string, string> = {
   'quiz.correct': 'إجابتك صحيحة',
   'quiz.wrong': 'إجابة غير صحيحة — الصحيح: {a}',
   'quiz.tryAgain': 'إعادة المحاولة',
+  'quiz.attemptsLeft': 'المحاولات المتبقية: {n}',
+  'quiz.bestScore': 'أفضل نتيجة: {s} من أصل {t} ({p}%)',
+  'quiz.noAttemptsLeft': 'استهلكت كل المحاولات المتاحة لهذا الاختبار.',
+
+  'grades.points': 'النقاط',
+  'grades.totalPoints': 'مجموع النقاط',
+  'grades.pointsOutOf': '{e} من أصل {p} نقطة',
+  'grades.examsPoints': 'نقاط الامتحانات',
+  'grades.homeworkPoints': 'نقاط الواجبات',
+  'grades.quizPoints': 'نقاط الاختبارات',
 
   'payments.loading': 'جارٍ تحميل المدفوعات…',
   'payments.subtitle': 'حالة الرسوم وسجل المدفوعات.',
@@ -212,6 +222,16 @@ const EN: Record<string, string> = {
   'quiz.correct': 'Correct',
   'quiz.wrong': 'Wrong — correct answer: {a}',
   'quiz.tryAgain': 'Try again',
+  'quiz.attemptsLeft': 'Attempts left: {n}',
+  'quiz.bestScore': 'Best score: {s} of {t} ({p}%)',
+  'quiz.noAttemptsLeft': 'You have used all 2 attempts for this quiz.',
+
+  'grades.points': 'Points',
+  'grades.totalPoints': 'Total points',
+  'grades.pointsOutOf': '{e} / {p} pts',
+  'grades.examsPoints': 'Exam points',
+  'grades.homeworkPoints': 'Homework points',
+  'grades.quizPoints': 'Quiz points',
 
   'payments.loading': 'Loading payments…',
   'payments.subtitle': 'Tuition status and payment history.',

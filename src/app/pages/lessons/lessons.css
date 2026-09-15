@@ -248,6 +248,47 @@
   margin-bottom: 1.25rem;
 }
 
+.quiz-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.attempt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--p-primary-50);
+  color: var(--p-primary-color);
+  border: 1px solid var(--p-primary-200);
+}
+
+.attempt-chip i {
+  font-size: 0.7rem;
+}
+
+.best-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  background: var(--p-amber-50);
+  color: var(--p-amber-700);
+  border: 1px solid var(--p-amber-200);
+}
+
+.best-banner i {
+  font-size: 0.8rem;
+}
+
 .quiz-actions {
   display: flex;
   align-items: center;

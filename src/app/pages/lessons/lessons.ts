@@ -35,6 +35,11 @@ export class Lessons {
   submitting = signal(false);
   result = signal<QuizAttemptResult | null>(null);
 
+  locked = signal(false);
+  attemptsLeft = signal(2);
+  bestScore = signal(0);
+  bestPercent = signal(0);
+
   readonly embedUrl = (id: string) => `https://www.youtube-nocookie.com/embed/${id}`;
 
   async ngOnInit() {
@@ -78,6 +83,7 @@ export class Lessons {
     this.quizMode.set(false);
     this.selectedAnswers.set([]);
     this.result.set(null);
+    this.locked.set(false);
   }
 
   toggleWatched(l: Lesson) {
@@ -89,19 +95,29 @@ export class Lessons {
     return this.i18n.dir() === 'rtl' ? 'pi pi-arrow-left' : 'pi pi-arrow-right';
   }
 
+  canRetake() {
+    return this.attemptsLeft() > 0;
+  }
+
   async openQuiz() {
     const lesson = this.active();
     if (!lesson) return;
     this.quizMode.set(true);
     this.quizError.set('');
     this.result.set(null);
+    this.locked.set(false);
     this.quizLoading.set(true);
     try {
       const q = await this.portal.getLessonQuiz(lesson._id);
       this.quiz.set(q);
+      this.attemptsLeft.set(q.attemptsLeft);
+      this.bestScore.set(q.bestScore);
+      this.bestPercent.set(q.bestPercent);
       this.selectedAnswers.set(q.questions.map(() => null));
+      if (q.attemptsLeft <= 0) this.locked.set(true);
     } catch (e) {
       this.quizError.set(e instanceof Error ? e.message : 'Failed to load quiz');
+      this.locked.set(false);
     } finally {
       this.quizLoading.set(false);
     }
@@ -113,6 +129,7 @@ export class Lessons {
     this.quizError.set('');
     this.selectedAnswers.set([]);
     this.result.set(null);
+    this.locked.set(false);
   }
 
   selectAnswer(idx: number, value: number) {
@@ -133,6 +150,9 @@ export class Lessons {
     try {
       const res = await this.portal.submitQuiz(q._id, this.selectedAnswers().map((a) => a as number));
       this.result.set(res);
+      this.attemptsLeft.set(res.attemptsLeft);
+      this.bestScore.set(res.bestScore);
+      this.bestPercent.set(res.bestPercent);
     } catch (e) {
       this.quizError.set(e instanceof Error ? e.message : 'Failed to submit quiz');
     } finally {
@@ -142,7 +162,7 @@ export class Lessons {
 
   restartQuiz() {
     const q = this.quiz();
-    if (!q) return;
+    if (!q || !this.canRetake()) return;
     this.result.set(null);
     this.selectedAnswers.set(q.questions.map(() => null));
   }

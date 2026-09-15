@@ -11,6 +11,48 @@
       </div>
     </div>
 
+    <div class="points-grid">
+      <p-card class="avg-card">
+        <div class="avg-inner">
+          <span class="stat-icon bg-cyan-50 text-primary"><i class="pi pi-star"></i></span>
+          <div>
+            <span class="avg-label">{{ i18n.t('grades.totalPoints') }}</span>
+            <strong class="avg-value" [style.color]="gradeColor(p.points.total.percent)">
+              {{ i18n.t('grades.pointsOutOf', { e: p.points.total.earned, p: p.points.total.possible }) }}
+            </strong>
+            <span class="avg-sub">{{ p.points.total.percent }}%</span>
+          </div>
+        </div>
+      </p-card>
+      <p-card class="avg-card">
+        <div class="avg-inner">
+          <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-pencil"></i></span>
+          <div>
+            <span class="avg-label">{{ i18n.t('grades.examsPoints') }}</span>
+            <strong class="avg-value">{{ i18n.t('grades.pointsOutOf', { e: p.points.exams.earned, p: p.points.exams.possible }) }}</strong>
+          </div>
+        </div>
+      </p-card>
+      <p-card class="avg-card">
+        <div class="avg-inner">
+          <span class="stat-icon bg-green-50 text-green"><i class="pi pi-book"></i></span>
+          <div>
+            <span class="avg-label">{{ i18n.t('grades.homeworkPoints') }}</span>
+            <strong class="avg-value">{{ i18n.t('grades.pointsOutOf', { e: p.points.homeworks.earned, p: p.points.homeworks.possible }) }}</strong>
+          </div>
+        </div>
+      </p-card>
+      <p-card class="avg-card">
+        <div class="avg-inner">
+          <span class="stat-icon bg-amber-50 text-amber"><i class="pi pi-question-circle"></i></span>
+          <div>
+            <span class="avg-label">{{ i18n.t('grades.quizPoints') }}</span>
+            <strong class="avg-value">{{ i18n.t('grades.pointsOutOf', { e: p.points.quizzes.earned, p: p.points.quizzes.possible }) }}</strong>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
     <div class="avg-cards">
       <p-card class="avg-card">
         <div class="avg-inner">

@@ -12,6 +12,30 @@
   }
 }
 
+.points-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 500px) {
+  .points-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+.avg-sub {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+}
+
+.avg-inner > div {
+  min-width: 0;
+}
+
 .avg-card {
   height: 100%;
 }
