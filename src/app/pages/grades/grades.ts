@@ -49,6 +49,13 @@ export class Grades {
     return Math.round(total / hw.length);
   }
 
+  averageQuiz() {
+    const q = this.profile()?.quizAttempts ?? [];
+    if (q.length === 0) return null;
+    const total = q.reduce((acc, a) => acc + a.percent, 0);
+    return Math.round(total / q.length);
+  }
+
   gradeColor(p: number) {
     if (p >= 85) return 'var(--p-green-600)';
     if (p >= 70) return 'var(--p-amber-600)';

@@ -12,28 +12,128 @@
 
   @if (active(); as current) {
     <p-card class="player-card mb-4">
-      <div class="iframe-wrap">
-        <iframe [src]="embedUrl(current.youtubeVideoId) | safeUrl"
-                title="{{ current.title }}"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-      </div>
-      <div class="player-meta">
-        <div class="player-head">
-          <div>
-            <p-tag [value]="current.module" severity="secondary" />
-            <h2 class="player-title">{{ current.title }}</h2>
-          </div>
-          <p-button [icon]="progress.isWatched(current._id) ? 'pi pi-check-circle' : 'pi pi-circle'"
-                    [label]="progress.isWatched(current._id) ? i18n.t('lessons.watched') : i18n.t('lessons.markWatched')"
-                    [severity]="progress.isWatched(current._id) ? 'success' : 'secondary'"
-                    [outlined]="progress.isWatched(current._id) ? false : true"
-                    (onClick)="toggleWatched(current)" />
+      @if (!quizMode()) {
+        <div class="iframe-wrap">
+          <iframe [src]="embedUrl(current.youtubeVideoId) | safeUrl"
+                  title="{{ current.title }}"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
         </div>
-        @if (current.description) {
-          <p class="muted player-desc">{{ current.description }}</p>
-        }
-      </div>
+        <div class="player-meta">
+          <div class="player-head">
+            <div>
+              <p-tag [value]="current.module" severity="secondary" />
+              <h2 class="player-title">{{ current.title }}</h2>
+            </div>
+            <p-button [icon]="progress.isWatched(current._id) ? 'pi pi-check-circle' : 'pi pi-circle'"
+                      [label]="progress.isWatched(current._id) ? i18n.t('lessons.watched') : i18n.t('lessons.markWatched')"
+                      [severity]="progress.isWatched(current._id) ? 'success' : 'secondary'"
+                      [outlined]="progress.isWatched(current._id) ? false : true"
+                      (onClick)="toggleWatched(current)" />
+          </div>
+          @if (current.description) {
+            <p class="muted player-desc">{{ current.description }}</p>
+          }
+          @if (current.hasQuiz) {
+            <div class="quiz-cta">
+              <p-button icon="pi pi-question-circle" [label]="i18n.t('lessons.takeQuiz')"
+                        (onClick)="openQuiz()" />
+              <span class="muted quiz-hint">{{ i18n.t('lessons.takeQuizHint') }}</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="quiz-panel">
+          <div class="quiz-head">
+            <div>
+              <p-tag [value]="current.module" severity="secondary" />
+              <h2 class="player-title mb-0">{{ current.title }}</h2>
+            </div>
+            <p-button icon="pi pi-arrow-left" [label]="i18n.t('lessons.backToLesson')" severity="secondary"
+                      [text]="true" size="small" (onClick)="closeQuiz()" />
+          </div>
+
+          @if (quizLoading()) {
+            <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('quiz.loading') }}</span></div>
+          } @else if (quizError()) {
+            <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ quizError() }}</span></div>
+            <div class="quiz-actions">
+              <p-button [label]="i18n.t('lessons.backToLesson')" severity="secondary" (onClick)="closeQuiz()" />
+            </div>
+          } @else if (result(); as r) {
+            <div class="result-block">
+              <div class="result-card" [class.pass]="r.percent >= 50" [class.fail]="r.percent < 50">
+                <i class="pi" [class]="r.percent >= 50 ? 'pi-check-circle' : 'pi-times-circle'"></i>
+                <div>
+                  <strong>{{ i18n.t('quiz.score', { s: r.score, t: r.total }) }} · {{ r.percent }}%</strong>
+                  <span>{{ r.percent >= 50 ? i18n.t('quiz.pass') : i18n.t('quiz.fail') }}</span>
+                </div>
+              </div>
+
+              <div class="review-list">
+                @for (res of r.results; track $index) {
+                  <div class="review-item">
+                    <p class="review-q">{{ i18n.t('quiz.question', { n: $index + 1, t: r.total }) }} — {{ res.question }}</p>
+                    <ul class="opt-list">
+                      @for (opt of res.options; track $index; let i = $index) {
+                        <li class="opt-row"
+                            [class.correct]="i === res.correctIndex"
+                            [class.wrong]="i === res.chosen && res.chosen !== res.correctIndex">
+                          <span class="opt-dot">
+                            <i class="pi" [class]="i === res.correctIndex ? 'pi-check' : (i === res.chosen ? 'pi-times' : 'pi-circle')"></i>
+                          </span>
+                          <span class="opt-text">{{ opt }}</span>
+                          @if (i === res.correctIndex) {
+                            <span class="opt-label ok">{{ i18n.t('quiz.correct') }}</span>
+                          } @else if (i === res.chosen) {
+                            <span class="opt-label no">{{ i18n.t('quiz.wrong', { a: res.options[res.correctIndex] }) }}</span>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+
+              <div class="quiz-actions">
+                <p-button [label]="i18n.t('quiz.tryAgain')" icon="pi pi-replay" severity="secondary" [outlined]="true"
+                          (onClick)="restartQuiz()" />
+                <p-button [label]="i18n.t('lessons.backToLesson')" [icon]="arrowIcon()"
+                          (onClick)="closeQuiz()" />
+              </div>
+            </div>
+          } @else if (quiz(); as q) {
+            <div class="quiz-questions">
+              @for (question of q.questions; track $index; let qi = $index) {
+                <div class="question-block">
+                  <p class="question-text">{{ i18n.t('quiz.question', { n: qi + 1, t: q.questions.length }) }} — {{ question.question }}</p>
+                  <ul class="opt-list">
+                    @for (opt of question.options; track $index; let oi = $index) {
+                      <li class="opt-row" [class.selected]="selectedAnswers()[qi] === oi"
+                          (click)="!submitting() && selectAnswer(qi, oi)">
+                        <button type="button" class="opt-btn">
+                          <span class="opt-dot">
+                            <i class="pi" [class]="selectedAnswers()[qi] === oi ? 'pi-circle-fill' : 'pi-circle'"></i>
+                          </span>
+                          <span class="opt-text">{{ opt }}</span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+
+            @if (quizError()) {
+              <p-message severity="error" class="w-full mb-3">{{ quizError() }}</p-message>
+            }
+            <div class="quiz-actions">
+              <p-button [label]="i18n.t('quiz.submit')" icon="pi pi-check" [loading]="submitting()"
+                        [disabled]="!allAnswered() || submitting()" (onClick)="submit()" />
+            </div>
+          }
+        </div>
+      }
     </p-card>
   }
 
@@ -68,6 +168,9 @@
                 <span class="lesson-date">{{ l.uploadDate | date: 'mediumDate':undefined:i18n.lang() }}</span>
               </span>
             </button>
+            @if (l.hasQuiz) {
+              <span class="quiz-badge" [title]="i18n.t('lessons.takeQuiz')"><i class="pi pi-question-circle"></i></span>
+            }
             @if (active()?._id === l._id) {
               <p-button icon="pi pi-play-circle" severity="success" [rounded]="true" [text]="true"
                         styleClass="playing-pill" />

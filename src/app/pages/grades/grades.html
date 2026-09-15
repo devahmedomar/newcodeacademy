@@ -34,6 +34,17 @@
           </div>
         </div>
       </p-card>
+      <p-card class="avg-card">
+        <div class="avg-inner">
+          <span class="stat-icon bg-amber-50 text-amber"><i class="pi pi-question-circle"></i></span>
+          <div>
+            <span class="avg-label">{{ i18n.t('grades.quizAvg') }}</span>
+            <strong class="avg-value" [style.color]="averageQuiz() !== null ? gradeColor(averageQuiz()!) : 'var(--p-text-muted-color)'">
+              {{ averageQuiz() ?? '—' }}%
+            </strong>
+          </div>
+        </div>
+      </p-card>
     </div>
 
     <p-card>
@@ -77,6 +88,30 @@
               <td>{{ h.points }} / {{ h.maxPoints }}</td>
               <td><p-tag [value]="percent(h.points, h.maxPoints) + '%'" [severity]="gradeSeverity(percent(h.points, h.maxPoints))" /></td>
               <td>{{ h.feedback || '—' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-card>
+
+    <p-card>
+      <div class="card-head">
+        <span class="section-title">{{ i18n.t('grades.quizzes') }}</span>
+      </div>
+      @if (p.quizAttempts.length === 0) {
+        <div class="state">{{ i18n.t('grades.noQuizzes') }}</div>
+      } @else {
+        <p-table [value]="p.quizAttempts" [size]="'small'">
+          <ng-template #header>
+            <tr><th>{{ i18n.t('grades.lesson') }}</th><th>{{ i18n.t('tbl.subject') }}</th><th>{{ i18n.t('tbl.score') }}</th><th>%</th><th>{{ i18n.t('tbl.date') }}</th></tr>
+          </ng-template>
+          <ng-template #body let-a>
+            <tr>
+              <td><strong>{{ a.lessonTitle }}</strong></td>
+              <td>{{ a.module }}</td>
+              <td>{{ a.score }} / {{ a.total }}</td>
+              <td><p-tag [value]="a.percent + '%'" [severity]="gradeSeverity(a.percent)" /></td>
+              <td>{{ a.createdAt | date: 'mediumDate':undefined:i18n.lang() }}</td>
             </tr>
           </ng-template>
         </p-table>

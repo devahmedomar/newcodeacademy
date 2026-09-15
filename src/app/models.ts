@@ -7,6 +7,7 @@ export interface Lesson {
   module: string;
   published: boolean;
   uploadDate: string;
+  hasQuiz?: boolean;
 }
 
 export interface Exam {
@@ -42,6 +43,45 @@ export interface Payment {
   markedBy: string;
 }
 
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+}
+
+export interface QuizForStudent {
+  _id: string;
+  lessonId: string;
+  questions: QuizQuestion[];
+}
+
+export interface QuizQuestionResult {
+  question: string;
+  options: string[];
+  chosen: number;
+  correctIndex: number;
+}
+
+export interface QuizAttemptResult {
+  _id: string;
+  quizId: string;
+  score: number;
+  total: number;
+  percent: number;
+  results: QuizQuestionResult[];
+}
+
+export interface QuizAttemptSummary {
+  _id: string;
+  quizId: string;
+  lessonId: string;
+  lessonTitle: string;
+  module: string;
+  score: number;
+  total: number;
+  percent: number;
+  createdAt: string;
+}
+
 export interface Profile {
   user: {
     id: string;
@@ -53,6 +93,7 @@ export interface Profile {
   homeworks: Homework[];
   payments: Payment[];
   lessons: Lesson[];
+  quizAttempts: QuizAttemptSummary[];
   currentMonth: string;
   currentPayment: Payment | null;
 }
