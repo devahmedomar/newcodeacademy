@@ -88,6 +88,14 @@ export interface QuizAttemptSummary {
   createdAt: string;
 }
 
+export interface LeaderboardEntry {
+  _id: string;
+  name: string;
+  earned: number;
+  possible: number;
+  percent: number;
+}
+
 export interface PointsBucket {
   earned: number;
   possible: number;

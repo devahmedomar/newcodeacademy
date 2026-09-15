@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-import { Profile, QuizForStudent, QuizAttemptResult } from '../models';
+import { Profile, QuizForStudent, QuizAttemptResult, LeaderboardEntry } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class PortalService {
@@ -16,5 +16,9 @@ export class PortalService {
 
   submitQuiz(quizId: string, answers: number[]) {
     return this.api.post<QuizAttemptResult>(`/api/quizzes/${quizId}/attempts`, { answers });
+  }
+
+  getLeaderboard(limit = 5) {
+    return this.api.get<LeaderboardEntry[]>(`/api/leaderboard?limit=${limit}`);
   }
 }

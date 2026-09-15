@@ -1,0 +1,97 @@
+<header class="landing-top">
+  <div class="landing-brand">
+    <i class="pi pi-graduation-cap"></i>
+    <span>New Code Academy</span>
+  </div>
+  <div class="landing-actions">
+    <p-button [text]="true" [rounded]="true" [label]="i18n.lang() === 'ar' ? 'EN' : 'العربية'"
+              styleClass="lang-btn" (onClick)="i18n.toggle()" />
+    <p-button [text]="true" [rounded]="true"
+              [icon]="theme.isDark() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
+              (onClick)="theme.toggle()" />
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="landing-badge"><i class="pi pi-code"></i> {{ t('landing.badge') }}</span>
+    <h1 class="landing-title">
+      {{ t('landing.h1a') }} <span class="hl">{{ t('landing.h1b') }}</span> {{ t('landing.h1c') }}
+    </h1>
+    <p class="landing-sub">{{ t('landing.sub') }}</p>
+    <div class="cta-row">
+      <p-button [label]="t('landing.ctaStudent')" icon="pi pi-sign-in" iconPos="right"
+                styleClass="cta-btn" (onClick)="signIn()" />
+    </div>
+  </div>
+</section>
+
+<section class="leaderboard" aria-label="{{ t('landing.leaderboard.title') }}">
+  <div class="lb-head">
+    <h2 class="lb-title"><i class="pi pi-trophy lb-icon"></i> {{ t('landing.leaderboard.title') }}</h2>
+    <p class="lb-sub">{{ t('landing.leaderboard.sub') }}</p>
+  </div>
+
+  @if (loading()) {
+    <div class="lb-state">{{ t('landing.leaderboard.loading') }}</div>
+  } @else if (error()) {
+    <div class="lb-state">{{ t('landing.leaderboard.error') }}</div>
+  } @else if (ranking().length === 0) {
+    <div class="lb-state">{{ t('landing.leaderboard.empty') }}</div>
+  } @else {
+    <div class="lb-list">
+      @for (s of ranking(); track s._id; let i = $index) {
+        <div class="lb-row">
+          <div class="lb-rank" [class.medal]="i < 3">
+            <span>{{ i + 1 }}</span>
+          </div>
+          <div class="lb-main">
+            <span class="lb-name">{{ s.name }}</span>
+            <div class="lb-track">
+              <span class="lb-fill" [style.width.%]="s.percent"></span>
+            </div>
+          </div>
+          <div class="lb-meta">
+            <span class="lb-pts">{{ t('landing.leaderboard.pts', { e: s.earned }) }}</span>
+            <span class="lb-pct">{{ s.percent }}%</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
+
+<section class="features">
+  <h2 class="feat-title">{{ t('landing.features.title') }}</h2>
+  <div class="feat-grid">
+    <p-card class="feat-card">
+      <div class="feat-inner">
+        <span class="feat-icon bg-blue-50 text-primary"><i class="pi pi-play-circle"></i></span>
+        <h3 class="feat-name">{{ t('landing.f1.title') }}</h3>
+        <p class="feat-desc">{{ t('landing.f1.desc') }}</p>
+      </div>
+    </p-card>
+    <p-card class="feat-card">
+      <div class="feat-inner">
+        <span class="feat-icon bg-green-50 text-green"><i class="pi pi-question-circle"></i></span>
+        <h3 class="feat-name">{{ t('landing.f2.title') }}</h3>
+        <p class="feat-desc">{{ t('landing.f2.desc') }}</p>
+      </div>
+    </p-card>
+    <p-card class="feat-card">
+      <div class="feat-inner">
+        <span class="feat-icon bg-amber-50 text-amber"><i class="pi pi-star"></i></span>
+        <h3 class="feat-name">{{ t('landing.f3.title') }}</h3>
+        <p class="feat-desc">{{ t('landing.f3.desc') }}</p>
+      </div>
+    </p-card>
+  </div>
+</section>
+
+<footer class="landing-footer">
+  <div class="footer-inner">
+    <i class="pi pi-graduation-cap"></i>
+    <span>New Code Academy</span>
+    <span class="footer-year">{{ t('landing.footer', { year: currentYear() }) }}</span>
+  </div>
+</footer>
