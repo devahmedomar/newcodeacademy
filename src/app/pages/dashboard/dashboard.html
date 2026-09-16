@@ -80,6 +80,32 @@
       </p-card>
     }
 
+    <p-card class="top3-card mb-4">
+      <div class="progress-head mb-3">
+        <span class="section-title"><i class="pi pi-trophy top3-icon"></i> {{ i18n.t('dash.top3') }}</span>
+        <span class="muted">{{ i18n.t('dash.top3Sub') }}</span>
+      </div>
+      @if (lbLoading()) {
+        <div class="state">{{ i18n.t('landing.leaderboard.loading') }}</div>
+      } @else if (lbError()) {
+        <div class="state">{{ i18n.t('landing.leaderboard.error') }}</div>
+      } @else if (leaderboard().length === 0) {
+        <div class="state">{{ i18n.t('landing.leaderboard.empty') }}</div>
+      } @else {
+        <div class="top3">
+          @for (s of leaderboard(); track s._id; let i = $index) {
+            <div class="top3-row">
+              <div class="top3-rank" [class.top3-first]="i === 0" [class.top3-second]="i === 1" [class.top3-third]="i === 2">
+                {{ i + 1 }}
+              </div>
+              <div class="top3-name"><strong>{{ s.name }}</strong></div>
+              <span class="top3-pts">{{ i18n.t('landing.leaderboard.pts', { e: s.earned }) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </p-card>
+
     <p-card>
       <div class="progress-head mb-3">
         <span class="section-title">{{ i18n.t('dash.recent') }}</span>

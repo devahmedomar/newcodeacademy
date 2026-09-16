@@ -8,7 +8,7 @@ import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { ProgressService } from '../../services/progress.service';
 import { I18nService } from '../../services/i18n.service';
-import { Profile } from '../../models';
+import { Profile, LeaderboardEntry } from '../../models';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,13 +25,28 @@ export class Dashboard {
   loading = signal(true);
   error = signal('');
 
+  leaderboard = signal<LeaderboardEntry[]>([]);
+  lbLoading = signal(true);
+  lbError = signal(false);
+
   async ngOnInit() {
     try {
-      this.profile.set(await this.portal.getMyProfile());
+      const [profile] = await Promise.all([this.portal.getMyProfile(), this.loadLeaderboard()]);
+      this.profile.set(profile);
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Failed to load dashboard');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async loadLeaderboard() {
+    try {
+      this.leaderboard.set(await this.portal.getLeaderboard(3));
+    } catch {
+      this.lbError.set(true);
+    } finally {
+      this.lbLoading.set(false);
     }
   }
 

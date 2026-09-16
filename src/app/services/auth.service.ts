@@ -40,6 +40,13 @@ export class AuthService {
     return res.user;
   }
 
+  async changePassword(currentPassword: string, newPassword: string) {
+    return this.api.put<{ message: string }>('/auth/password', {
+      currentPassword,
+      newPassword,
+    });
+  }
+
   logout() {
     localStorage.removeItem('nca_token');
     localStorage.removeItem('nca_user');

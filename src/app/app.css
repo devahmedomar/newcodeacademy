@@ -102,6 +102,26 @@
   color: var(--p-surface-300) !important;
 }
 
+.pass-btn {
+  color: var(--p-surface-300) !important;
+}
+
+.pass-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pass-form p-message {
+  max-width: none;
+}
+
+.pass-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+}
+
 /* Bottom nav — mobile first */
 .bottom-nav {
   position: fixed;

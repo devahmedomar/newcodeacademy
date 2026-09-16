@@ -26,6 +26,8 @@
                   (onClick)="i18n.toggle()" />
         <p-button [text]="true" [rounded]="true" [icon]="theme.isDark() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
                   tooltipPos="left" [pTooltip]="i18n.t('app.toggleDark')" (onClick)="theme.toggle()" />
+        <p-button [text]="true" [rounded]="true" icon="pi pi-key" styleClass="pass-btn"
+                  tooltipPos="left" [pTooltip]="i18n.t('app.changePassword')" (onClick)="openPassDialog()" />
         <p-button [text]="true" [rounded]="true" icon="pi pi-sign-out" styleClass="logout-btn"
                   tooltipPos="left" [pTooltip]="i18n.t('app.logout')" (onClick)="logout()" />
       </div>
@@ -51,3 +53,36 @@
     </a>
   </nav>
 }
+
+<p-dialog [(visible)]="showPassDialog" [modal]="true" [dismissableMask]="true" [closable]="true"
+          [header]="i18n.t('app.changePassword')" [style]="{ maxWidth: '420px', width: '90vw' }">
+  <div class="pass-form">
+    @if (passMsg) {
+      <p-message severity="success" class="w-full">{{ passMsg }}</p-message>
+    }
+    @if (passErr) {
+      <p-message severity="error" class="w-full">{{ passErr }}</p-message>
+    }
+    <div class="pass-field">
+      <p-floatlabel>
+        <input pInputText id="passCurrent" type="password" class="w-full" [(ngModel)]="passCurrent"
+               name="passCurrent" autocomplete="current-password" />
+        <label for="passCurrent">{{ i18n.t('app.currentPassword') }}</label>
+      </p-floatlabel>
+    </div>
+    <div class="pass-field">
+      <p-floatlabel>
+        <input pInputText id="passNew" type="password" class="w-full" [(ngModel)]="passNew"
+               name="passNew" autocomplete="new-password" />
+        <label for="passNew">{{ i18n.t('app.newPassword') }}</label>
+      </p-floatlabel>
+    </div>
+    <p class="pass-note">{{ i18n.t('app.passHint') }}</p>
+  </div>
+  <ng-template #footer>
+    <p-button [label]="i18n.t('app.cancel')" severity="secondary" [text]="true" (onClick)="showPassDialog = false" />
+    <p-button [label]="changing ? i18n.t('app.saving') : i18n.t('app.save')" [loading]="changing"
+              icon="pi pi-check" (onClick)="changePassword()"
+              [disabled]="!passCurrent || passNew.length < 6" />
+  </ng-template>
+</p-dialog>
