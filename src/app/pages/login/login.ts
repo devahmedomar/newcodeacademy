@@ -10,6 +10,7 @@ import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { AuthService } from '../../services/auth.service';
 import { I18nService } from '../../services/i18n.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class Login {
     private auth: AuthService,
     private router: Router,
     public i18n: I18nService,
+    public theme: ThemeService,
   ) {}
 
   async submit() {

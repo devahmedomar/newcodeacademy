@@ -453,3 +453,36 @@
   line-height: 1.4;
   color: var(--p-text-muted-color);
 }
+
+/* ---------- Dark mode overrides ---------- */
+body.dark-mode .lesson-list li.active {
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
+}
+body.dark-mode .lesson-order {
+  background: var(--p-surface-800);
+}
+body.dark-mode .lesson-check.done + .lesson-btn .lesson-order {
+  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
+  color: var(--p-primary-300);
+}
+body.dark-mode .quiz-badge,
+body.dark-mode .attempt-chip {
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
+  color: var(--p-primary-300);
+}
+body.dark-mode .best-banner {
+  background: color-mix(in srgb, var(--p-amber-500) 14%, transparent);
+  border-color: color-mix(in srgb, var(--p-amber-500) 40%, transparent);
+  color: var(--p-amber-300);
+}
+body.dark-mode .opt-row.selected {
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--p-primary-300);
+}
+body.dark-mode .opt-label.ok { color: var(--p-green-400); }
+body.dark-mode .opt-label.no { color: var(--p-red-400); }
+body.dark-mode .result-card.pass { color: var(--p-green-400); }
+body.dark-mode .result-card.fail { color: var(--p-amber-400); }

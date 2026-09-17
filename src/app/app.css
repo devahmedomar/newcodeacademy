@@ -1,7 +1,7 @@
 .topbar {
   background: #0f172a;
   color: #fff;
-  padding: 0 var(--p-content-padding);
+  padding: 0 1.25rem;
 }
 
 .topbar-inner {
@@ -129,7 +129,7 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--p-surface-card);
+  background: var(--p-content-background);
   border-top: 1px solid var(--p-content-border-color);
   display: flex;
   padding: 0.4rem 0.25rem calc(0.4rem + env(safe-area-inset-bottom));

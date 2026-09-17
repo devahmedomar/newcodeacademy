@@ -13,8 +13,13 @@
 
 .lang-corner .p-button {
   border: 1px solid var(--p-surface-300);
-  background: var(--p-surface-card);
+  background: var(--p-content-background);
   color: var(--p-text-color);
+}
+
+body.dark-mode .lang-corner .p-button {
+  border-color: var(--p-surface-600);
+  background: var(--p-surface-800);
 }
 
 .auth-aside {
@@ -83,6 +88,10 @@
   justify-content: center;
   padding: 1.75rem 1rem;
   background: var(--p-surface-50);
+}
+
+body.dark-mode .auth-main {
+  background: var(--p-surface-900);
 }
 
 @media (min-width: 900px) {

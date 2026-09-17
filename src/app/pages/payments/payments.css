@@ -51,6 +51,23 @@
   color: var(--p-blue-900);
 }
 
+/* ---------- Dark mode overrides ---------- */
+body.dark-mode .status-banner.paid {
+  background: color-mix(in srgb, var(--p-green-500) 12%, transparent);
+  border-color: color-mix(in srgb, var(--p-green-500) 38%, transparent);
+  color: var(--p-green-200);
+}
+body.dark-mode .status-banner.due {
+  background: color-mix(in srgb, var(--p-amber-500) 12%, transparent);
+  border-color: color-mix(in srgb, var(--p-amber-500) 38%, transparent);
+  color: var(--p-amber-200);
+}
+body.dark-mode .status-banner.neutral {
+  background: color-mix(in srgb, var(--p-blue-500) 12%, transparent);
+  border-color: color-mix(in srgb, var(--p-blue-500) 38%, transparent);
+  color: var(--p-blue-200);
+}
+
 .card-head {
   margin-bottom: 0.75rem;
 }

@@ -10,6 +10,14 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Grade/status colors — flip automatically with the theme */
+  --nca-ok: var(--p-green-600);
+  --nca-warn: var(--p-amber-600);
+  --nca-bad: var(--p-red-500);
+  color-scheme: light;
+}
+
 html,
 body {
   margin: 0;
@@ -23,6 +31,7 @@ body {
   color: var(--p-text-color);
   -webkit-font-smoothing: antialiased;
   line-height: 1.55;
+  transition: background-color 0.25s ease;
 }
 
 /* Arabic (RTL) gets Cairo + no letter-spacing (Arabic doesn't take kerning well) */
@@ -36,7 +45,11 @@ body {
 }
 
 body.dark-mode {
+  --nca-ok: var(--p-green-400);
+  --nca-warn: var(--p-amber-400);
+  --nca-bad: var(--p-red-400);
   background: var(--p-surface-950);
+  color-scheme: dark;
 }
 
 h1,
@@ -163,6 +176,17 @@ a {
 .bg-purple-50 { background: var(--p-purple-50); }
 .bg-cyan-50 { background: var(--p-cyan-50); }
 
+/* Dark mode: the -50 pastels stay light, so tint them instead of blinding the page */
+body.dark-mode .text-green { color: var(--p-green-400); }
+body.dark-mode .text-amber { color: var(--p-amber-400); }
+body.dark-mode .text-red { color: var(--p-red-400); }
+body.dark-mode .bg-green-50 { background: color-mix(in srgb, var(--p-green-500) 16%, transparent); }
+body.dark-mode .bg-amber-50 { background: color-mix(in srgb, var(--p-amber-500) 16%, transparent); }
+body.dark-mode .bg-red-50 { background: color-mix(in srgb, var(--p-red-500) 16%, transparent); }
+body.dark-mode .bg-blue-50 { background: color-mix(in srgb, var(--p-blue-500) 16%, transparent); }
+body.dark-mode .bg-purple-50 { background: color-mix(in srgb, var(--p-purple-500) 16%, transparent); }
+body.dark-mode .bg-cyan-50 { background: color-mix(in srgb, var(--p-cyan-500) 16%, transparent); }
+
 /* ---------- Empty & loading states ---------- */
 
 .state {
@@ -190,3 +214,9 @@ a {
   border: 2px solid var(--p-surface-50);
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--p-surface-400); }
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--p-surface-700);
+  border-color: var(--p-surface-950);
+}
+body.dark-mode ::-webkit-scrollbar-thumb:hover { background: var(--p-surface-600); }

@@ -20,6 +20,16 @@
   </script>
 </head>
 <body>
+  <script>
+    try {
+      var t = localStorage.getItem('nca_theme');
+      var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) {
+        document.body.classList.add('dark-mode');
+        document.documentElement.style.colorScheme = 'dark';
+      }
+    } catch (e) {}
+  </script>
   <app-root></app-root>
   <div id="p-license-host" style="display:none" aria-hidden="true"></div>
 </body>

@@ -61,9 +61,9 @@ export class Grades {
   }
 
   gradeColor(p: number) {
-    if (p >= 85) return 'var(--p-green-600)';
-    if (p >= 70) return 'var(--p-amber-600)';
-    return 'var(--p-red-500)';
+    if (p >= 85) return 'var(--nca-ok)';
+    if (p >= 70) return 'var(--nca-warn)';
+    return 'var(--nca-bad)';
   }
 
   gradeSeverity(p: number): 'success' | 'warn' | 'danger' {

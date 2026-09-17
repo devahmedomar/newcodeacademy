@@ -140,7 +140,7 @@
 }
 
 .lb-state {
-  background: var(--p-surface-card);
+  background: var(--p-content-background);
   border: 1px dashed var(--p-content-border-color);
   border-radius: 16px;
   padding: 2rem 1rem;
@@ -158,7 +158,7 @@
   grid-template-columns: 48px 1fr auto;
   align-items: center;
   gap: 0.85rem;
-  background: var(--p-surface-card);
+  background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
   border-radius: 16px;
   padding: 0.85rem 1rem;
@@ -306,4 +306,16 @@
   margin-inline-start: auto;
   color: var(--p-text-color);
   font-weight: 500;
+}
+
+/* ---------- Dark mode overrides ---------- */
+body.dark-mode .lb-row {
+  background: var(--p-content-background);
+}
+body.dark-mode .lb-rank {
+  background: var(--p-surface-700);
+  color: var(--p-surface-300);
+}
+body.dark-mode .lb-track {
+  background: var(--p-surface-800);
 }

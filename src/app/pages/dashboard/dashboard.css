@@ -250,3 +250,44 @@
   font-size: 0.9rem;
   color: var(--p-text-muted-color);
 }
+
+/* ---------- Dark mode overrides ---------- */
+body.dark-mode .payment-banner {
+  background: color-mix(in srgb, var(--p-amber-500) 12%, transparent);
+  border-color: color-mix(in srgb, var(--p-amber-500) 38%, transparent);
+  color: var(--p-amber-200);
+}
+body.dark-mode .payment-banner .text-red { color: var(--p-red-400); }
+body.dark-mode .payment-banner .text-amber { color: var(--p-amber-400); }
+body.dark-mode .next-lesson {
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, transparent) !important;
+}
+body.dark-mode .cf-tag-exam {
+  background: color-mix(in srgb, var(--p-blue-500) 15%, transparent);
+  color: var(--p-blue-300);
+}
+body.dark-mode .cf-tag-hw {
+  background: var(--p-surface-800);
+  color: var(--p-surface-200);
+}
+body.dark-mode .top3-row {
+  background: var(--p-surface-800);
+  border-color: var(--p-surface-700);
+}
+body.dark-mode .top3-rank {
+  background: var(--p-surface-700);
+  color: var(--p-surface-300);
+}
+body.dark-mode .top3-rank.top3-first {
+  background: color-mix(in srgb, var(--p-amber-500) 20%, transparent);
+  color: var(--p-amber-300);
+}
+body.dark-mode .top3-rank.top3-second {
+  background: var(--p-surface-600);
+  color: var(--p-surface-100);
+}
+body.dark-mode .top3-rank.top3-third {
+  background: color-mix(in srgb, var(--p-cyan-500) 20%, transparent);
+  color: var(--p-cyan-300);
+}

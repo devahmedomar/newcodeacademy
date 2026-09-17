@@ -3,6 +3,9 @@
     <p-button [text]="true" [rounded]="true" icon="pi pi-globe"
               [label]="i18n.lang() === 'ar' ? 'EN' : 'العربية'"
               [pTooltip]="i18n.t('app.switchLang')" (onClick)="i18n.toggle()" />
+    <p-button [text]="true" [rounded]="true"
+              [icon]="theme.isDark() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"
+              [pTooltip]="i18n.t('app.toggleDark')" (onClick)="theme.toggle()" />
   </div>
 
   <div class="auth-aside">
