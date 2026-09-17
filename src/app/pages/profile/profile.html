@@ -1,0 +1,167 @@
+@if (loading()) {
+  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('dash.loading') }}</span></div>
+} @else if (error()) {
+  <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
+} @else {
+  @if (profile(); as p) {
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">{{ avatar() }} {{ p.user.name }}</h1>
+        <p class="page-subtitle">{{ i18n.t('profile.subtitle') }}</p>
+      </div>
+    </div>
+
+    @if (newBadges().length > 0) {
+      <p-message severity="success" class="w-full new-badge-banner">
+        <div class="new-badge-row">
+          <div>
+            <strong>{{ i18n.t('profile.newBadge') }}</strong>
+            <span>
+              @for (b of newBadges(); track b.id) {
+                <span class="new-badge-name">{{ b.icon }} {{ title(b) }}</span>
+              }
+            </span>
+          </div>
+        </div>
+      </p-message>
+    }
+
+    @if (activity(); as a) {
+      <div class="stat-cards">
+        <p-card class="stat-card">
+          <div class="level-ring" [style]="levelRingStyle()">
+            <div class="level-ring-inner">
+              <strong class="level-num">{{ level()?.level ?? 1 }}</strong>
+              <span class="level-label">{{ i18n.t('profile.level', { n: level()?.level ?? 1 }) }}</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <strong>{{ i18n.t('profile.points') }}:
+              @if (badges(); as b) { {{ b.level.pointsIntoLevel }} }
+            </strong>
+            <span class="muted">{{ i18n.t('profile.nextLevel', { p: level()?.pointsForNext ?? 100 }) }}</span>
+            <p-progressbar [value]="level()?.progressPercent ?? 0" [showValue]="true"
+                           [style]="{ height: '8px' }" styleClass="mt-2" />
+          </div>
+        </p-card>
+        <p-card class="stat-card">
+          <div class="stat-stat">
+            <span class="stat-icon bg-red-50 text-red"><i class="pi pi-fire"></i></span>
+            <div>
+              <strong class="stat-value">{{ a.streak }}</strong>
+              <span class="stat-label">{{ i18n.t('profile.streakCard') }}</span>
+              <span class="muted small">
+                {{ i18n.t('profile.longest') }}: {{ a.longestStreak }}
+                @if (a.todayWatched) { · {{ i18n.t('profile.today') }} ✓ }
+              </span>
+            </div>
+          </div>
+        </p-card>
+        <p-card class="stat-card">
+          <div class="stat-stat">
+            <span class="stat-icon bg-amber-50 text-amber"><i class="pi pi-calendar"></i></span>
+            <div>
+              <strong class="stat-value">{{ a.weekProgress }} / {{ a.weeklyGoal }}</strong>
+              <span class="stat-label">{{ i18n.t('profile.weekly') }}</span>
+            </div>
+          </div>
+          <p-progressbar [value]="weeklyPercent(a)" [style]="{ height: '8px' }" styleClass="mt-2" />
+        </p-card>
+      </div>
+
+      <p-card class="mb-4">
+        <div class="progress-head mb-3">
+          <span class="section-title">{{ i18n.t('profile.heatmap') }}</span>
+          <span class="muted">{{ i18n.t('profile.heatmapHint') }}</span>
+        </div>
+        <div class="heatmap" [dir]="'ltr'">
+          @for (c of heatmapCells(); track c.date) {
+            <span class="hm-cell" [class.lv0]="c.level === 0" [class.lv1]="c.level === 1"
+                  [class.lv2]="c.level === 2" [class.lv3]="c.level === 3"
+                  [title]="c.date"></span>
+          }
+        </div>
+      </p-card>
+    }
+
+    <p-card class="mb-4">
+      <div class="progress-head mb-3">
+        <span class="section-title"><i class="pi pi-medal profile-icon"></i> {{ i18n.t('profile.badges') }}</span>
+        <span class="muted">{{ i18n.t('profile.earnedCount', { n: earned().length }) }}</span>
+      </div>
+      @if (earned().length > 0) {
+        <div class="badge-grid">
+          @for (b of earned(); track b.id) {
+            <div class="badge-card" [class.newly]="newBadges().some((n) => n.id === b.id)">
+              <span class="badge-icon">{{ b.icon }}</span>
+              <strong>{{ title(b) }}</strong>
+              <span class="muted small">{{ desc(b) }}</span>
+            </div>
+          }
+        </div>
+        <div class="badge-divider"></div>
+      }
+      @if (locked().length > 0) {
+        <div class="badge-grid">
+          @for (b of locked(); track b.id) {
+            <div class="badge-card locked">
+              <span class="badge-icon"><i class="pi pi-lock"></i></span>
+              <strong>{{ title(b) }}</strong>
+              <span class="muted small">{{ desc(b) }}</span>
+            </div>
+          }
+        </div>
+        <p class="muted small mt-2 lock-hint">{{ i18n.t('profile.lockedHint') }}</p>
+      }
+    </p-card>
+
+    <div class="profile-grid">
+      <p-card class="mb-4">
+        <div class="progress-head mb-3">
+          <span class="section-title">{{ i18n.t('profile.avatar') }}</span>
+        </div>
+        <p class="muted small">{{ i18n.t('profile.avatarHint') }}</p>
+        <div class="avatar-grid">
+          @for (a of avatars; track a) {
+            <button type="button" class="avatar-btn" [class.selected]="avatar() === a"
+                    (click)="pickAvatar(a)">{{ a }}</button>
+          }
+        </div>
+        @if (avatarMsg()) {
+          <p-message severity="success" class="w-full mt-2" [style]="{ fontSize: '0.85rem' }">{{ avatarMsg() }}</p-message>
+        }
+      </p-card>
+
+      <p-card class="mb-4">
+        <div class="progress-head mb-3">
+          <span class="section-title">{{ i18n.t('profile.notes') }}</span>
+          <span class="muted">{{ i18n.t('profile.notesCount', { n: notesCount() }) }}</span>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">
+            <span><i class="pi pi-volume-up"></i> {{ i18n.t('profile.sound') }}</span>
+            <span class="muted small">{{ i18n.t('profile.soundHint') }}</span>
+          </div>
+          <p-button [label]="soundWanted() ? i18n.t('app.on') : i18n.t('app.off')"
+                    [severity]="soundWanted() ? 'success' : 'secondary'"
+                    [outlined]="!soundWanted()" (onClick)="toggleSound()" />
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">
+            <span><i class="pi pi-bell"></i> {{ i18n.t('profile.notifications') }}</span>
+            <span class="muted small">
+              @if (notifPerm() === 'denied') { {{ i18n.t('profile.notifDenied') }} }
+              @else if (notifPerm() === 'granted' && notifEnabled()) { {{ i18n.t('profile.notifGranted') }} }
+              @else { {{ i18n.t('profile.notificationsHint') }} }
+            </span>
+          </div>
+          <p-button [label]="notifEnabled() ? i18n.t('app.on') : i18n.t('app.off')"
+                    [severity]="notifEnabled() ? 'success' : 'secondary'"
+                    [outlined]="!notifEnabled()"
+                    [disabled]="notifPerm() === 'unsupported' || notifPerm() === 'denied'"
+                    (onClick)="toggleNotifications()" />
+        </div>
+      </p-card>
+    </div>
+  }
+}

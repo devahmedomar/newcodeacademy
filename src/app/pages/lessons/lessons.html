@@ -10,15 +10,49 @@
     </div>
   </div>
 
+  @if (roadmap().length > 1) {
+    <div class="roadmap mb-4">
+      <div class="progress-head mb-3">
+        <span class="section-title"><i class="pi pi-map roadmap-icon"></i> {{ i18n.t('lessons.roadmap') }}</span>
+      </div>
+      <div class="roadmap-track">
+        @for (m of roadmap(); track m.name) {
+          <div class="roadmap-node" [class.done]="m.done" [class.current]="m.current">
+            <div class="roadmap-dot">
+              @if (m.done) { <i class="pi pi-check"></i> }
+              @else { <span class="roadmap-pct">{{ m.pct }}%</span> }
+            </div>
+            <span class="roadmap-name">{{ m.name }}</span>
+            @if (m.current) {
+              <span class="roadmap-you">{{ i18n.t('lessons.current') }}</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   @if (active(); as current) {
     <p-card class="player-card mb-4">
       @if (!quizMode()) {
-        <div class="iframe-wrap">
-          <iframe [src]="embedUrl(current.youtubeVideoId) | safeUrl"
-                  title="{{ current.title }}"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen></iframe>
-        </div>
+        @if (ytState() === 'failed') {
+          <div class="iframe-wrap">
+            <iframe [src]="embedUrl(current.youtubeVideoId) | safeUrl"
+                    title="{{ current.title }}"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+          </div>
+        } @else {
+          <div class="iframe-wrap">
+            <div id="yt-player" class="yt-host"></div>
+          </div>
+        }
+        @if (resumeText()) {
+          <div class="resume-chip">
+            <span><i class="pi pi-backward"></i> {{ i18n.t('lessons.resume', { t: resumeText() }) }}</span>
+            <button type="button" class="link-btn" (click)="clearResume()">{{ i18n.t('lessons.startOver') }}</button>
+          </div>
+        }
         <div class="player-meta">
           <div class="player-head">
             <div>
@@ -34,11 +68,17 @@
           @if (current.description) {
             <p class="muted player-desc">{{ current.description }}</p>
           }
-          @if (current.hasQuiz) {
-            <div class="quiz-cta">
+          <div class="player-actions">
+            @if (current.hasQuiz) {
               <p-button icon="pi pi-question-circle" [label]="i18n.t('lessons.takeQuiz')"
                         (onClick)="openQuiz()" />
-              <span class="muted quiz-hint">{{ i18n.t('lessons.takeQuizHint') }}</span>
+            }
+            <p-button icon="pi pi-pencil" [label]="i18n.t('lessons.openNotes')" severity="secondary"
+                      [outlined]="true" (onClick)="openNotes()" />
+          </div>
+          @if (current.hasQuiz) {
+            <div class="quiz-hint">
+              <span class="muted">{{ i18n.t('lessons.takeQuizHint') }}</span>
             </div>
           }
         </div>
@@ -81,6 +121,84 @@
             <div class="quiz-actions">
               <p-button [label]="i18n.t('lessons.backToLesson')" severity="secondary" (onClick)="closeQuiz()" />
             </div>
+          } @else if (drillMode() && drillIndices().length > 0) {
+            <div class="practice-note-line"><i class="pi pi-refresh"></i> {{ i18n.t('quiz.practiceWrongHint') }}</div>
+            @if (drillResult(); as dr) {
+              <div class="result-block">
+                <div class="result-card pass">
+                  <i class="pi pi-check-circle"></i>
+                  <div>
+                    <strong>{{ i18n.t('quiz.practiceDone') }} {{ drillCorrectCount() }} / {{ drillShownResults().length }}</strong>
+                    <span>{{ i18n.t('quiz.practiceNote') }}</span>
+                  </div>
+                </div>
+                <div class="review-list">
+                  @for (res of drillShownResults(); track $index; let ri = $index) {
+                    <div class="review-item">
+                      <p class="review-q">{{ ri + 1 }} — {{ res.question }}</p>
+                      <ul class="opt-list">
+                        @for (opt of res.options; track $index; let i = $index) {
+                          <li class="opt-row"
+                              [class.correct]="i === res.correctIndex"
+                              [class.wrong]="i === res.chosen && res.chosen !== res.correctIndex">
+                            <span class="opt-dot">
+                              <i class="pi" [class]="i === res.correctIndex ? 'pi-check' : (i === res.chosen ? 'pi-times' : 'pi-circle')"></i>
+                            </span>
+                            <span class="opt-text">{{ opt }}</span>
+                            @if (i === res.correctIndex) {
+                              <span class="opt-label ok">{{ i18n.t('quiz.correct') }}</span>
+                            } @else if (i === res.chosen) {
+                              <span class="opt-label no">{{ i18n.t('quiz.wrong', { a: res.options[res.correctIndex] }) }}</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+                      @if (res.explanation) {
+                        <div class="explanation"><i class="pi pi-info-circle"></i>
+                          <span><strong>{{ i18n.t('quiz.explanation') }}:</strong> {{ res.explanation }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="quiz-actions">
+                  @if (drillShownResults().some((x) => !x.correct)) {
+                    <p-button [label]="i18n.t('quiz.practiceWrong')" icon="pi pi-refresh" severity="warn"
+                              [outlined]="true" (onClick)="startDrill()" />
+                  }
+                  <p-button [label]="i18n.t('lessons.backToLesson')" [icon]="arrowIcon()"
+                            (onClick)="closeQuiz()" />
+                </div>
+              </div>
+            } @else {
+              <div class="quiz-questions">
+                @for (question of drillQuestions().questions; track $index; let qi = $index) {
+                  <div class="question-block">
+                    <p class="question-text">{{ i18n.t('quiz.question', { n: qi + 1, t: drillQuestions().questions.length }) }} — {{ question.question }}</p>
+                    <ul class="opt-list">
+                      @for (opt of question.options; track $index; let oi = $index) {
+                        <li class="opt-row" [class.selected]="drillAnswers()[qi] === oi"
+                            (click)="!submitting() && selectDrillAnswer(qi, oi)">
+                          <button type="button" class="opt-btn">
+                            <span class="opt-dot">
+                              <i class="pi" [class]="drillAnswers()[qi] === oi ? 'pi-circle-fill' : 'pi-circle'"></i>
+                            </span>
+                            <span class="opt-text">{{ opt }}</span>
+                          </button>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+              @if (drillError()) {
+                <p-message severity="error" class="w-full mb-3">{{ drillError() }}</p-message>
+              }
+              <div class="quiz-actions">
+                <p-button [label]="i18n.t('quiz.submit')" icon="pi pi-check" [loading]="submitting()"
+                          [disabled]="!allDrillAnswered() || submitting()" (onClick)="submitDrill()" />
+              </div>
+            }
           } @else if (result(); as r) {
             <div class="result-block">
               <div class="result-card" [class.pass]="r.percent >= 50" [class.fail]="r.percent < 50">
@@ -110,20 +228,33 @@
                           <span class="opt-dot">
                             <i class="pi" [class]="i === res.correctIndex ? 'pi-check' : (i === res.chosen ? 'pi-times' : 'pi-circle')"></i>
                           </span>
-                          <span class="opt-text">{{ opt }}</span>
-                          @if (i === res.correctIndex) {
-                            <span class="opt-label ok">{{ i18n.t('quiz.correct') }}</span>
-                          } @else if (i === res.chosen) {
-                            <span class="opt-label no">{{ i18n.t('quiz.wrong', { a: res.options[res.correctIndex] }) }}</span>
-                          }
-                        </li>
+<span class="opt-text">{{ opt }}</span>
+                            @if (i === res.correctIndex) {
+                              <span class="opt-label ok">{{ i18n.t('quiz.correct') }}</span>
+                            } @else if (i === res.chosen) {
+                              <span class="opt-label no">{{ i18n.t('quiz.wrong', { a: res.options[res.correctIndex] }) }}</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+                      @if (res.explanation) {
+                        <div class="explanation"><i class="pi pi-info-circle"></i>
+                          <span><strong>{{ i18n.t('quiz.explanation') }}:</strong> {{ res.explanation }}</span>
+                        </div>
                       }
-                    </ul>
-                  </div>
-                }
-              </div>
+                    </div>
+                  }
+                </div>
 
-              <div class="quiz-actions">
+                @if (wrongIndices().length > 0) {
+                  <div class="practice-note-line"><i class="pi pi-refresh"></i> {{ i18n.t('quiz.practiceNote') }}</div>
+                }
+
+                <div class="quiz-actions">
+                  @if (wrongIndices().length > 0) {
+                    <p-button [label]="i18n.t('quiz.practiceWrong')" icon="pi pi-refresh" severity="warn"
+                              [outlined]="true" (onClick)="startDrill()" />
+                  }
                 @if (r.attemptsLeft > 0) {
                   <p-button [label]="i18n.t('quiz.tryAgain')" icon="pi pi-replay" severity="secondary" [outlined]="true"
                             (onClick)="restartQuiz()" />
@@ -219,4 +350,21 @@
       <span>{{ i18n.t('lessons.empty') }}</span>
     </div>
   }
+
+  <p-dialog [(visible)]="notesOpen" [modal]="true" [dismissableMask]="true" [closable]="true"
+            [header]="i18n.t('notes.title')" [style]="{ maxWidth: '520px', width: '92vw' }">
+    @if (active(); as current) {
+      <div class="notes-form">
+        <p class="muted small mb-3"><strong>{{ current.title }}</strong></p>
+        @if (noteMsg()) {
+          <p-message severity="success" class="w-full mb-3">{{ noteMsg() }}</p-message>
+        }
+        <textarea pInputTextarea class="w-full" rows="7" [(ngModel)]="noteText"
+                  [placeholder]="i18n.t('notes.placeholder')" name="note"></textarea>
+      </div>
+      <ng-template #footer>
+        <p-button [label]="i18n.t('notes.save')" icon="pi pi-save" (onClick)="saveNote()" />
+      </ng-template>
+    }
+  </p-dialog>
 }

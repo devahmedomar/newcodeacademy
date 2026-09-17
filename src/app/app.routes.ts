@@ -6,6 +6,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { Lessons } from './pages/lessons/lessons';
 import { Grades } from './pages/grades/grades';
 import { Payments } from './pages/payments/payments';
+import { ProfilePage } from './pages/profile/profile';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'lessons', component: Lessons, canActivate: [authGuard] },
   { path: 'grades', component: Grades, canActivate: [authGuard] },
   { path: 'payments', component: Payments, canActivate: [authGuard] },
+  { path: 'profile', component: ProfilePage, canActivate: [authGuard] },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

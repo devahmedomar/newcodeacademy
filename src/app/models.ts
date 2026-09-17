@@ -46,6 +46,7 @@ export interface Payment {
 export interface QuizQuestion {
   question: string;
   options: string[];
+  explanation?: string;
 }
 
 export interface QuizForStudent {
@@ -62,6 +63,7 @@ export interface QuizQuestionResult {
   options: string[];
   chosen: number;
   correctIndex: number;
+  explanation?: string;
 }
 
 export interface QuizAttemptResult {
@@ -74,6 +76,15 @@ export interface QuizAttemptResult {
   bestScore: number;
   bestPercent: number;
   results: QuizQuestionResult[];
+}
+
+export interface PracticeResult {
+  quizId: string;
+  score: number;
+  total: number;
+  percent: number;
+  practice: true;
+  results: Array<QuizQuestionResult & { correct: boolean }>;
 }
 
 export interface QuizAttemptSummary {
@@ -114,6 +125,8 @@ export interface Profile {
     name: string;
     email: string;
     enrollmentDate: string;
+    avatar?: string;
+    notifications?: boolean;
   };
   exams: Exam[];
   homeworks: Homework[];
@@ -124,4 +137,59 @@ export interface Profile {
   points: PointsSummary;
   currentMonth: string;
   currentPayment: Payment | null;
+}
+
+export interface WatchDay {
+  date: string;
+  count: number;
+}
+
+export interface WatchActivity {
+  streak: number;
+  longestStreak: number;
+  weekProgress: number;
+  weeklyGoal: number;
+  todayWatched: boolean;
+  watchedLessons: string[];
+  days: WatchDay[];
+}
+
+export interface LevelInfo {
+  level: number;
+  pointsIntoLevel: number;
+  pointsForNext: number;
+  progressPercent: number;
+}
+
+export interface BadgeText {
+  en: string;
+  ar: string;
+}
+
+export interface Badge {
+  id: string;
+  icon: string;
+  title: BadgeText;
+  description: BadgeText;
+  earned: boolean;
+}
+
+export interface BadgesResult {
+  level: LevelInfo;
+  earned: Badge[];
+  locked: Badge[];
+}
+
+export interface Announcement {
+  _id: string;
+  title: string;
+  body: string;
+  pinned: boolean;
+  createdAt: string;
+}
+
+export interface Note {
+  lessonId: string;
+  text: string;
+  updatedAt: string;
 }

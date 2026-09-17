@@ -9,7 +9,57 @@
         <h1 class="page-title">{{ i18n.t('dash.welcome', { name: p.user.name.split(' ')[0] }) }}</h1>
         <p class="page-subtitle">{{ i18n.t('dash.subtitle') }}</p>
       </div>
+      <p-button [label]="i18n.t('dash.seeProfile')" icon="pi pi-user" severity="secondary" [text]="true"
+                [icon]="arrowIcon()" iconPos="right" routerLink="/profile" />
     </div>
+
+    @if (newBadges().length > 0) {
+      <p-message severity="success" class="w-full new-badge-banner">
+        <strong>{{ i18n.t('profile.newBadge') }}</strong>
+        <span class="new-badge-names">{{ newBadges().join(' · ') }}</span>
+      </p-message>
+    }
+
+    @if (onboardingVisible()) {
+      <div class="onboard mb-4">
+        <div class="progress-head mb-2">
+          <span class="section-title"><i class="pi pi-rocket onboard-icon"></i> {{ i18n.t('onboard.title') }}</span>
+          <button type="button" class="link-btn" (click)="dismissOnboarding()">{{ i18n.t('onboard.dismiss') }}</button>
+        </div>
+        <p class="muted small mb-3">{{ i18n.t('onboard.hint') }}</p>
+        <div class="onboard-list">
+          @for (item of onboarding(); track item.key) {
+            <a class="onboard-item" [class.done]="item.done" [routerLink]="item.route">
+              <span class="onboard-dot">
+                @if (item.done) { <i class="pi pi-check"></i> }
+                @else { <i [class]="item.icon"></i> }
+              </span>
+              <span class="onboard-label">{{ item.label }}</span>
+              <span class="onboard-count">{{ onboardingDoneCount() }}/{{ onboarding().length }}</span>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+    @if (!annLoading() && announcements().length > 0) {
+      <div class="announcements mb-4">
+        <div class="progress-head mb-2">
+          <span class="section-title"><i class="pi pi-megaphone ann-icon"></i> {{ i18n.t('dash.announcements') }}</span>
+        </div>
+        <div class="ann-list">
+          @for (a of announcements().slice(0, 2); track a._id) {
+            <div class="ann-item">
+              <span class="ann-pin" [class.pinned]="a.pinned"><i class="pi pi-bookmark"></i></span>
+              <div class="ann-body">
+                <strong>{{ a.title }}</strong>
+                <span class="muted small">{{ a.body }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
 
     @if (p.currentPayment && p.currentPayment.status !== 'paid') {
       <div class="payment-banner">
@@ -40,10 +90,14 @@
         <div class="stat-stat">
           <span class="stat-icon bg-amber-50 text-amber"><i class="pi pi-fire"></i></span>
           <div>
-            <strong class="stat-value">{{ streak() }}</strong>
-            <span class="stat-label">{{ i18n.t('dash.watched') }}</span>
+            <strong class="stat-value">{{ streak() }}<span class="streak-suffix">🔥</span></strong>
+            <span class="stat-label">{{ i18n.t('profile.streakCard') }}</span>
+            <span class="muted small week-goal-line">
+              {{ i18n.t('profile.weeklyProgress', { a: weekProgress(), b: weekGoal() }) }}
+            </span>
           </div>
         </div>
+        <p-progressbar [value]="weekPercent()" [showValue]="true" [style]="{ height: '8px' }" styleClass="mt-2" />
       </p-card>
       <p-card class="stat-card">
         <div class="stat-stat">
@@ -79,6 +133,13 @@
         <p-button [label]="i18n.t('dash.watchNow')" icon="pi pi-play" iconPos="right" routerLink="/lessons" />
       </p-card>
     }
+
+    <p-card class="tip-card mb-4">
+      <div class="tip-row">
+        <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-lightbulb"></i></span>
+        <p class="tip-text">{{ i18n.t('dash.tip') }} — {{ tipOfDay() }}</p>
+      </div>
+    </p-card>
 
     <p-card class="top3-card mb-4">
       <div class="progress-head mb-3">
