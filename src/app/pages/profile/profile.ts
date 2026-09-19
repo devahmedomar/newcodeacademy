@@ -181,7 +181,7 @@ export class ProfilePage {
   levelRingStyle() {
     const lvl = this.level() ?? { progressPercent: 0 };
     const deg = (lvl.progressPercent / 100) * 360;
-    return { background: `conic-gradient(var(--p-primary-color) ${deg}deg, var(--p-surface-200) ${deg}deg)` };
+    return { background: `conic-gradient(var(--p-primary-color) ${deg}deg, var(--nca-ring-track) ${deg}deg)` };
   }
 
   ringDotStyle() {

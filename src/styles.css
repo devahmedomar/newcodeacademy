@@ -15,6 +15,8 @@
   --nca-ok: var(--p-green-600);
   --nca-warn: var(--p-amber-600);
   --nca-bad: var(--p-red-500);
+  /* Ring/badge track — light surface in light mode */
+  --nca-ring-track: var(--p-surface-200);
   color-scheme: light;
 }
 
@@ -48,6 +50,8 @@ body.dark-mode {
   --nca-ok: var(--p-green-400);
   --nca-warn: var(--p-amber-400);
   --nca-bad: var(--p-red-400);
+  /* Ring/badge track — dark surface in dark mode */
+  --nca-ring-track: var(--p-surface-700);
   background: var(--p-surface-950);
   color-scheme: dark;
 }

@@ -165,6 +165,12 @@
   background: var(--p-primary-50);
 }
 
+body.dark-mode .bottom-nav a:hover,
+body.dark-mode .bottom-nav a.active {
+  color: var(--p-primary-300);
+  background: color-mix(in srgb, var(--p-primary-color) 16%, transparent) !important;
+}
+
 /* Tablet / desktop */
 @media (min-width: 768px) {
   .topnav {
