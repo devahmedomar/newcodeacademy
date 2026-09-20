@@ -74,6 +74,7 @@ export class Lessons implements OnDestroy {
   private player: any = null;
   private watchTimer: number | null = null;
   private polling = false;
+  private destroyed = false;
 
   readonly embedUrl = (id: string) => `https://www.youtube-nocookie.com/embed/${id}`;
 
@@ -92,6 +93,7 @@ export class Lessons implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroyed = true;
     this.teardownPlayer();
   }
 
@@ -126,6 +128,7 @@ export class Lessons implements OnDestroy {
   }
 
   private setupPlayerSafe() {
+    if (this.destroyed) return;
     const current = this.active();
     if (current && !this.quizMode()) this.setupPlayer(current);
   }
@@ -135,6 +138,10 @@ export class Lessons implements OnDestroy {
     if (this.ytState() !== 'ready' || this.quizMode()) return;
     const w = window as any;
     if (!w.YT || !w.YT.Player) return;
+    if (!document.getElementById('yt-player')) {
+      setTimeout(() => this.setupPlayerSafe(), 0);
+      return;
+    }
     const resume = this.resumeFor(lesson._id);
     this.resumeSeconds.set(resume);
     this.player = new w.YT.Player('yt-player', {
