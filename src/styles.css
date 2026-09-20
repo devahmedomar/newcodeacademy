@@ -17,7 +17,52 @@
   --nca-bad: var(--p-red-500);
   /* Ring/badge track — light surface in light mode */
   --nca-ring-track: var(--p-surface-200);
+  --nca-ease: cubic-bezier(0.2, 0, 0, 1);
   color-scheme: light;
+
+  /* ---- Type scale ---- */
+  --nca-type-display: clamp(1.6rem, 4.4vw, 2.1rem);
+  --nca-type-h1: 1.45rem;
+  --nca-type-h2: 1.2rem;
+  --nca-type-h3: 1.05rem;
+  --nca-type-body: 0.95rem;
+  --nca-type-small: 0.85rem;
+  --nca-type-caption: 0.75rem;
+
+  --nca-weight-regular: 400;
+  --nca-weight-medium: 500;
+  --nca-weight-semibold: 600;
+  --nca-weight-bold: 700;
+  --nca-weight-extrabold: 800;
+
+  /* ---- Spacing scale (4-pt) ---- */
+  --nca-space-1: 0.25rem;
+  --nca-space-2: 0.5rem;
+  --nca-space-3: 0.75rem;
+  --nca-space-4: 1rem;
+  --nca-space-5: 1.25rem;
+  --nca-space-6: 1.5rem;
+  --nca-space-8: 2rem;
+  --nca-space-10: 2.5rem;
+
+  /* ---- Radii ---- */
+  --nca-radius-sm: 0.5rem;
+  --nca-radius-md: 0.75rem;
+  --nca-radius-lg: 1rem;
+  --nca-radius-xl: 1.25rem;
+  --nca-radius-full: 999px;
+
+  /* ---- Elevation (soft, layered shadows) ---- */
+  --nca-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --nca-shadow-md: 0 2px 4px rgba(15, 23, 42, 0.05), 0 8px 18px rgba(15, 23, 42, 0.07);
+  --nca-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.05), 0 18px 36px rgba(15, 23, 42, 0.1);
+  --nca-shadow-focus: 0 0 0 4px color-mix(in srgb, var(--p-primary-color) 32%, transparent);
+
+  /* ---- Focus ring (a11y) ---- */
+  --nca-focus-outline: 3px solid color-mix(in srgb, var(--p-primary-color) 55%, transparent);
+
+  /* Elevate PrimeNG cards without touching every page */
+  --p-card-shadow: var(--nca-shadow-md);
 }
 
 html,
@@ -52,8 +97,50 @@ body.dark-mode {
   --nca-bad: var(--p-red-400);
   /* Ring/badge track — dark surface in dark mode */
   --nca-ring-track: var(--p-surface-700);
+  --nca-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --nca-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 18px rgba(0, 0, 0, 0.45);
+  --nca-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 18px 36px rgba(0, 0, 0, 0.5);
   background: var(--p-surface-950);
   color-scheme: dark;
+}
+
+/* ---------- Focus-visible (keyboard a11y) ---------- */
+
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: var(--nca-focus-outline);
+  outline-offset: 2px;
+}
+
+/* PrimeNG toggles commonly push focus to their internal input — keep it visible there too */
+.p-button:focus-visible,
+.p-checkbox-box:focus-visible,
+.p-radio-box:focus-visible,
+.p-inputtext:focus-visible {
+  outline: var(--nca-focus-outline);
+  outline-offset: 2px;
+}
+
+/* ---------- Motion (system-aware) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  html,
+  body,
+  main,
+  .p-card,
+  .topbar,
+  .bottom-nav {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 h1,
@@ -100,8 +187,8 @@ a {
 
 .page-title {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: var(--nca-type-h1);
+  font-weight: var(--nca-weight-bold);
   letter-spacing: -0.01em;
 }
 
@@ -117,8 +204,8 @@ a {
 
 .section-title {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: var(--nca-type-h3);
+  font-weight: var(--nca-weight-semibold);
 }
 
 .mb-0 { margin-bottom: 0; }
@@ -143,10 +230,27 @@ a {
 
 .p-card {
   border-radius: var(--p-content-border-radius);
+  border: 1px solid var(--p-content-border-color);
 }
 
 .p-card .p-card-content {
   padding-top: 0;
+}
+
+/* Cards that afford clicking get a gentle lift */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--nca-shadow-lg);
+  }
+
+  .lift {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+}
+
+body.dark-mode .p-card {
+  border-color: color-mix(in srgb, var(--p-surface-700) 60%, transparent);
 }
 
 .p-button {
@@ -198,15 +302,83 @@ body.dark-mode .bg-cyan-50 { background: color-mix(in srgb, var(--p-cyan-500) 16
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   text-align: center;
-  padding: 2.5rem 1rem;
+  padding: 3rem 1rem;
   color: var(--p-text-muted-color);
 }
 
 .state i {
-  font-size: 1.75rem;
-  opacity: 0.6;
+  font-size: 1.35rem;
+  opacity: 1;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--nca-radius-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--p-primary-color);
+  background: var(--p-primary-50);
+  border: 1px solid var(--p-primary-200);
+}
+
+body.dark-mode .state i {
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  border-color: color-mix(in srgb, var(--p-primary-color) 38%, transparent);
+  color: var(--p-primary-300);
+}
+
+.state span {
+  max-width: 34ch;
+  line-height: 1.55;
+}
+
+/* ---------- Skeleton loaders (pure CSS shimmer) ---------- */
+
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: var(--p-surface-200);
+  border-radius: var(--nca-radius-md);
+}
+
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--p-surface-0) 65%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: nca-shimmer 1.4s infinite;
+}
+
+body.dark-mode .skel {
+  background: var(--p-surface-800);
+}
+
+body.dark-mode .skel::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--p-surface-700) 45%, transparent),
+    transparent
+  );
+}
+
+@keyframes nca-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel::after {
+    animation: none;
+  }
 }
 
 /* ---------- Scrollbar (subtle, consistent) ---------- */
@@ -224,3 +396,34 @@ body.dark-mode ::-webkit-scrollbar-thumb {
   border-color: var(--p-surface-950);
 }
 body.dark-mode ::-webkit-scrollbar-thumb:hover { background: var(--p-surface-600); }
+
+/* ---------- Micro-interactions (global) ---------- */
+
+.p-datatable tbody tr {
+  transition: background-color 0.18s ease;
+}
+
+.p-progressbar .p-progressbar-value {
+  transition: width 0.5s var(--nca-ease);
+}
+
+.p-button {
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    box-shadow 0.18s ease, transform 0.12s var(--nca-ease);
+}
+
+.p-button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-datatable tbody tr,
+  .p-progressbar .p-progressbar-value,
+  .p-button {
+    transition: none;
+  }
+
+  .p-button:not(:disabled):active {
+    transform: none;
+  }
+}

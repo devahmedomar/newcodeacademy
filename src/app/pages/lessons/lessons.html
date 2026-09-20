@@ -10,6 +10,8 @@
     </div>
   </div>
 
+  <div class="lessons-grid">
+    <div class="lessons-main">
   @if (roadmap().length > 1) {
     <div class="roadmap mb-4">
       <div class="progress-head mb-3">
@@ -33,7 +35,7 @@
   }
 
   @if (active(); as current) {
-    <p-card class="player-card mb-4">
+    <p-card class="player-card">
       @if (!quizMode()) {
         @if (ytState() === 'failed') {
           <div class="iframe-wrap">
@@ -266,33 +268,63 @@
               </div>
             </div>
           } @else if (quiz(); as q) {
-            <div class="quiz-questions">
-              @for (question of q.questions; track $index; let qi = $index) {
-                <div class="question-block">
-                  <p class="question-text">{{ i18n.t('quiz.question', { n: qi + 1, t: q.questions.length }) }} — {{ question.question }}</p>
-                  <ul class="opt-list">
-                    @for (opt of question.options; track $index; let oi = $index) {
-                      <li class="opt-row" [class.selected]="selectedAnswers()[qi] === oi"
-                          (click)="!submitting() && selectAnswer(qi, oi)">
-                        <button type="button" class="opt-btn">
-                          <span class="opt-dot">
-                            <i class="pi" [class]="selectedAnswers()[qi] === oi ? 'pi-circle-fill' : 'pi-circle'"></i>
-                          </span>
-                          <span class="opt-text">{{ opt }}</span>
-                        </button>
-                      </li>
-                    }
-                  </ul>
-                </div>
-              }
+            <div class="quiz-stepper">
+              <div class="quiz-step-head">
+                <span class="quiz-step-count">
+                  {{ i18n.t('quiz.question', { n: qIndex() + 1, t: q.questions.length }) }}
+                </span>
+                @if (answeredCount() !== q.questions.length) {
+                  <span class="quiz-step-answered">
+                    {{ i18n.t('quiz.answered', { n: answeredCount(), t: q.questions.length }) }}
+                  </span>
+                }
+              </div>
+              <p-progressbar [value]="quizProgress()"
+                             [style]="{ height: '8px' }" />
+              <div class="quiz-dots" [attr.aria-label]="i18n.t('quiz.progressAria')">
+                @for (qa of selectedAnswers(); track $index; let qi = $index) {
+                  <span class="qdot" [class.done]="qa !== null" [class.current]="qi === qIndex()"
+                        (click)="qa !== null && !submitting() && qIndex.set(qi)"></span>
+                }
+              </div>
             </div>
+
+            @if (currentQuestion(); as question) {
+              <div class="question-block current">
+                <p class="question-text">{{ question.question }}</p>
+                <ul class="opt-list">
+                  @for (opt of question.options; track $index; let oi = $index) {
+                    <li class="opt-row" [class.selected]="selectedAnswers()[qIndex()] === oi"
+                        (click)="!submitting() && selectAnswer(qIndex(), oi)">
+                      <button type="button" class="opt-btn">
+                        <span class="opt-dot">
+                          <i class="pi" [class]="selectedAnswers()[qIndex()] === oi ? 'pi-circle-fill' : 'pi-circle'"></i>
+                        </span>
+                        <span class="opt-text">{{ opt }}</span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+                @if (selectedAnswers()[qIndex()] === null) {
+                  <p class="quiz-step-hint">{{ i18n.t('quiz.pickOne') }}</p>
+                }
+              </div>
+            }
 
             @if (quizError()) {
               <p-message severity="error" class="w-full mb-3">{{ quizError() }}</p-message>
             }
-            <div class="quiz-actions">
-              <p-button [label]="i18n.t('quiz.submit')" icon="pi pi-check" [loading]="submitting()"
-                        [disabled]="!allAnswered() || submitting()" (onClick)="submit()" />
+            <div class="quiz-actions between">
+              <p-button [label]="i18n.t('quiz.back')" [icon]="backIcon()" severity="secondary"
+                        [text]="true" [disabled]="qIndex() === 0 || submitting()" (onClick)="prev()" />
+              @if (qIndex() === q.questions.length - 1) {
+                <p-button [label]="i18n.t('quiz.submit')" icon="pi pi-check" [loading]="submitting()"
+                          [disabled]="!allAnswered() || submitting()" (onClick)="submit()" />
+              } @else {
+                <p-button [label]="i18n.t('quiz.next')" [icon]="nextIcon()"
+                          [disabled]="selectedAnswers()[qIndex()] === null || submitting()"
+                          (onClick)="next()" />
+              }
             </div>
           }
         </div>
@@ -300,6 +332,9 @@
     </p-card>
   }
 
+  </div>
+
+  <aside class="lessons-rail">
   @for (module of modules(); track module) {
     <p-card class="module-card">
       <div class="module-head">
@@ -350,6 +385,8 @@
       <span>{{ i18n.t('lessons.empty') }}</span>
     </div>
   }
+  </aside>
+</div>
 
   <p-dialog [(visible)]="notesOpen" [modal]="true" [dismissableMask]="true" [closable]="true"
             [header]="i18n.t('notes.title')" [style]="{ maxWidth: '520px', width: '92vw' }">

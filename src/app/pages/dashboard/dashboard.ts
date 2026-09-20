@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { ProgressBar } from 'primeng/progressbar';
 import { Tag } from 'primeng/tag';
 import { Button } from 'primeng/button';
@@ -17,7 +18,7 @@ import { Profile, LeaderboardEntry, Announcement, WatchActivity } from '../../mo
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, ProgressBar, Tag, Button, Card, Message, TableModule],
+  imports: [RouterLink, DatePipe, ProgressBar, Tag, Button, Card, Message, TableModule],
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
@@ -33,6 +34,7 @@ export class Dashboard {
   profile = signal<Profile | null>(null);
   loading = signal(true);
   error = signal('');
+  today = new Date();
 
   leaderboard = signal<LeaderboardEntry[]>([]);
   lbLoading = signal(true);
@@ -124,6 +126,11 @@ export class Dashboard {
 
   moduleCount() {
     return new Set((this.profile()?.lessons ?? []).map((l) => l.module)).size;
+  }
+
+  modulePercent(module: string) {
+    const lessons = (this.profile()?.lessons ?? []).filter((l) => l.module === module);
+    return lessons.length ? this.progress.progressPercent(lessons) : 0;
   }
 
   recentGrades(p: Profile) {

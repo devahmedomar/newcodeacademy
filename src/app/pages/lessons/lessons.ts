@@ -51,6 +51,7 @@ export class Lessons implements OnDestroy {
   quizLoading = signal(false);
   quizError = signal('');
   selectedAnswers = signal<(number | null)[]>([]);
+  qIndex = signal(0);
   submitting = signal(false);
   result = signal<QuizAttemptResult | null>(null);
 
@@ -258,6 +259,7 @@ export class Lessons implements OnDestroy {
     this.quizError.set('');
     this.quizMode.set(false);
     this.selectedAnswers.set([]);
+    this.qIndex.set(0);
     this.result.set(null);
     this.locked.set(false);
     this.drillMode.set(false);
@@ -316,6 +318,7 @@ export class Lessons implements OnDestroy {
     try {
       const q = await this.portal.getLessonQuiz(lesson._id);
       this.quiz.set(q);
+      this.qIndex.set(0);
       this.attemptsLeft.set(q.attemptsLeft);
       this.bestScore.set(q.bestScore);
       this.bestPercent.set(q.bestPercent);
@@ -334,6 +337,7 @@ export class Lessons implements OnDestroy {
     this.quiz.set(null);
     this.quizError.set('');
     this.selectedAnswers.set([]);
+    this.qIndex.set(0);
     this.result.set(null);
     this.locked.set(false);
     this.drillMode.set(false);
@@ -347,6 +351,40 @@ export class Lessons implements OnDestroy {
     const cur = [...this.selectedAnswers()];
     cur[idx] = value;
     this.selectedAnswers.set(cur);
+  }
+
+  currentQuestion() {
+    const q = this.quiz();
+    return q?.questions[this.qIndex()] ?? null;
+  }
+
+  answeredCount() {
+    return this.selectedAnswers().filter((a) => a !== null).length;
+  }
+
+  quizProgress() {
+    const q = this.quiz();
+    if (!q || q.questions.length === 0) return 0;
+    return Math.round((this.answeredCount() / q.questions.length) * 100);
+  }
+
+  next() {
+    const q = this.quiz();
+    if (!q || this.submitting()) return;
+    if (this.qIndex() < q.questions.length - 1) this.qIndex.update((i) => i + 1);
+    else this.submit();
+  }
+
+  prev() {
+    this.qIndex.update((i) => Math.max(0, i - 1));
+  }
+
+  backIcon() {
+    return this.i18n.dir() === 'rtl' ? 'pi pi-chevron-right' : 'pi pi-chevron-left';
+  }
+
+  nextIcon() {
+    return this.i18n.dir() === 'rtl' ? 'pi pi-chevron-left' : 'pi pi-chevron-right';
   }
 
   allAnswered() {
@@ -378,6 +416,7 @@ export class Lessons implements OnDestroy {
     if (!q || !this.canRetake()) return;
     this.result.set(null);
     this.selectedAnswers.set(q.questions.map(() => null));
+    this.qIndex.set(0);
   }
 
   // ---------- Missed-question drill ----------

@@ -92,3 +92,37 @@
 .p-card-content > .p-datatable {
   margin-top: 0.25rem;
 }
+
+.percent-pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 86px;
+}
+
+.pip-bar {
+  width: 44px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--p-surface-200);
+  overflow: hidden;
+  display: inline-block;
+}
+
+body.dark-mode .pip-bar {
+  background: var(--p-surface-700);
+}
+
+.pip-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s var(--nca-ease);
+}
+
+.pip-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

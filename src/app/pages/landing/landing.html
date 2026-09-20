@@ -39,22 +39,41 @@
   } @else if (ranking().length === 0) {
     <div class="lb-state">{{ t('landing.leaderboard.empty') }}</div>
   } @else {
-    <div class="lb-list">
-      @for (s of ranking(); track s._id; let i = $index) {
-        <div class="lb-row">
-          <div class="lb-rank" [class.medal]="i < 3">
-            <span>{{ i + 1 }}</span>
-          </div>
-          <div class="lb-main">
-            <span class="lb-name">{{ s.name }}</span>
-            <div class="lb-track">
-              <span class="lb-fill" [style.width.%]="s.percent"></span>
+    <div class="lb-shell">
+      @if (podium().filter((p) => p !== null).length > 0) {
+        <div class="lb-podium">
+          @for (s of podium(); track s?._id ?? $index; let i = $index) {
+            @if (s; as st) {
+              <div class="podium-pod" [class.p2]="place(st) === 2" [class.p1]="place(st) === 1" [class.p3]="place(st) === 3">
+                <span class="podium-medal"><i class="pi" [class]="place(st) === 1 ? 'pi-trophy' : (place(st) === 3 ? 'pi-star' : 'pi-star')"></i></span>
+                <span class="podium-avatar">{{ initial(st) }}</span>
+                <span class="podium-name">{{ st.name }}</span>
+                <span class="podium-pts">{{ t('landing.leaderboard.pts', { e: st.earned }) }}</span>
+                <span class="podium-pct">{{ st.percent }}%</span>
+              </div>
+            }
+          }
+        </div>
+      }
+      @if (rest().length > 0) {
+        <div class="lb-list">
+          @for (s of rest(); track s._id; let i = $index) {
+            <div class="lb-row">
+              <div class="lb-rank">
+                <span>{{ i + 4 }}</span>
+              </div>
+              <div class="lb-main">
+                <span class="lb-name">{{ s.name }}</span>
+                <div class="lb-track">
+                  <span class="lb-fill" [style.width.%]="s.percent"></span>
+                </div>
+              </div>
+              <div class="lb-meta">
+                <span class="lb-pts">{{ t('landing.leaderboard.pts', { e: s.earned }) }}</span>
+                <span class="lb-pct">{{ s.percent }}%</span>
+              </div>
             </div>
-          </div>
-          <div class="lb-meta">
-            <span class="lb-pts">{{ t('landing.leaderboard.pts', { e: s.earned }) }}</span>
-            <span class="lb-pct">{{ s.percent }}%</span>
-          </div>
+          }
         </div>
       }
     </div>

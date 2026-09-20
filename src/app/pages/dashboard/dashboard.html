@@ -1,5 +1,17 @@
 @if (loading()) {
-  <div class="state"><i class="pi pi-spin pi-spinner"></i><span>{{ i18n.t('dash.loading') }}</span></div>
+  <div class="dash-skeleton" aria-label="Loading dashboard">
+    <div class="skel skel-h1"></div>
+    <div class="skel skel-hero"></div>
+    <div class="skel-row">
+      <div class="skel skel-card"></div>
+      <div class="skel skel-card"></div>
+      <div class="skel skel-card"></div>
+    </div>
+    <div class="skel-row two">
+      <div class="skel skel-wide"></div>
+      <div class="skel skel-narrow"></div>
+    </div>
+  </div>
 } @else if (error()) {
   <div class="state"><i class="pi pi-exclamation-triangle text-red"></i><span>{{ error() }}</span></div>
 } @else {
@@ -7,7 +19,11 @@
     <div class="page-header">
       <div>
         <h1 class="page-title">{{ i18n.t('dash.welcome', { name: p.user.name.split(' ')[0] }) }}</h1>
-        <p class="page-subtitle">{{ i18n.t('dash.subtitle') }}</p>
+        <p class="page-subtitle">
+          <span class="today-line">{{ today | date: 'longDate':undefined:i18n.lang() }}</span>
+          <span class="sub-sep"></span>
+          {{ i18n.t('dash.subtitle') }}
+        </p>
       </div>
       <p-button [label]="i18n.t('dash.seeProfile')" icon="pi pi-user" severity="secondary" [text]="true"
                 [icon]="arrowIcon()" iconPos="right" routerLink="/profile" />
@@ -37,25 +53,6 @@
               <span class="onboard-label">{{ item.label }}</span>
               <span class="onboard-count">{{ onboardingDoneCount() }}/{{ onboarding().length }}</span>
             </a>
-          }
-        </div>
-      </div>
-    }
-
-    @if (!annLoading() && announcements().length > 0) {
-      <div class="announcements mb-4">
-        <div class="progress-head mb-2">
-          <span class="section-title"><i class="pi pi-megaphone ann-icon"></i> {{ i18n.t('dash.announcements') }}</span>
-        </div>
-        <div class="ann-list">
-          @for (a of announcements().slice(0, 2); track a._id) {
-            <div class="ann-item">
-              <span class="ann-pin" [class.pinned]="a.pinned"><i class="pi pi-bookmark"></i></span>
-              <div class="ann-body">
-                <strong>{{ a.title }}</strong>
-                <span class="muted small">{{ a.body }}</span>
-              </div>
-            </div>
           }
         </div>
       </div>
@@ -110,62 +107,105 @@
       </p-card>
     </div>
 
-    <p-card class="mb-4">
-      <div class="progress-head">
-        <span class="section-title">{{ i18n.t('dash.progress') }}</span>
-        <span class="muted">
-          {{ i18n.t('dash.counts', { a: progress.watchedIds().size, b: p.lessons.length }) }}
-        </span>
-      </div>
-      <p-progressbar [value]="overallProgress()" [showValue]="true" [style]="{ height: '10px' }" styleClass="mt-3" />
-    </p-card>
-
     @if (nextLesson(); as next) {
-      <p-card class="next-lesson mb-4">
-        <div class="next-lesson-body">
-          <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-play-circle"></i></span>
-          <div>
-            <span class="section-title">{{ i18n.t('dash.next') }}</span>
-            <h3 class="mb-0">{{ next.title }}</h3>
-            <span class="muted" style="font-size:0.85rem">{{ next.module }}</span>
+      <div class="continue-hero">
+        <div class="continue-glow"></div>
+        <div class="continue-main">
+          <div class="continue-copy">
+            <span class="continue-kicker"><i [class]="arrowIcon()"></i> {{ i18n.t('dash.continue') }}</span>
+            <h2 class="continue-title">{{ next.title }}</h2>
+            <div class="continue-meta">
+              <p-tag [value]="next.module" styleClass="continue-tag" />
+              <span class="continue-pos">{{ i18n.t('dash.lessonNum', { n: next.order }) }}</span>
+            </div>
           </div>
+          <p-button class="continue-cta" [label]="i18n.t('dash.watchNow')" [icon]="arrowIcon()"
+                    iconPos="right" severity="contrast" routerLink="/lessons" />
         </div>
-        <p-button [label]="i18n.t('dash.watchNow')" icon="pi pi-play" iconPos="right" routerLink="/lessons" />
-      </p-card>
+        <div class="continue-foot">
+          <p-progressbar [value]="modulePercent(next.module)" [style]="{ height: '8px' }" styleClass="continue-bar" />
+          <span class="continue-bar-label">{{ i18n.t('dash.ofModule', { p: modulePercent(next.module) }) }}</span>
+        </div>
+      </div>
+    } @else {
+      <div class="continue-hero done">
+        <div class="continue-glow"></div>
+        <div class="continue-main">
+          <div class="continue-copy">
+            <span class="continue-kicker"><i class="pi pi-check-circle"></i> {{ i18n.t('dash.caughtUp') }}</span>
+            <h2 class="continue-title">{{ i18n.t('dash.caughtUpTitle') }}</h2>
+            <p class="continue-sub">{{ i18n.t('dash.caughtUpSub') }}</p>
+          </div>
+          <p-button [label]="i18n.t('dash.browseLessons')" [icon]="arrowIcon()" iconPos="right"
+                    severity="contrast" routerLink="/lessons" />
+        </div>
+      </div>
     }
 
-    <p-card class="tip-card mb-4">
-      <div class="tip-row">
-        <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-lightbulb"></i></span>
-        <p class="tip-text">{{ i18n.t('dash.tip') }} — {{ tipOfDay() }}</p>
-      </div>
-    </p-card>
+    <div class="dash-grid">
+      <div class="dash-col">
+        <p-card>
+          <div class="progress-head mb-3">
+            <span class="section-title"><i class="pi pi-map where-icon"></i> {{ i18n.t('dash.whereYouAre') }}</span>
+            <span class="muted">
+              {{ i18n.t('dash.counts', { a: progress.watchedIds().size, b: p.lessons.length }) }}
+            </span>
+          </div>
+          <p-progressbar [value]="overallProgress()" [showValue]="true" [style]="{ height: '10px' }" styleClass="where-bar" />
+          <div class="tip-row">
+            <span class="stat-icon bg-blue-50 text-primary"><i class="pi pi-lightbulb"></i></span>
+            <p class="tip-text">{{ i18n.t('dash.tip') }} — {{ tipOfDay() }}</p>
+          </div>
+        </p-card>
 
-    <p-card class="top3-card mb-4">
-      <div class="progress-head mb-3">
-        <span class="section-title"><i class="pi pi-trophy top3-icon"></i> {{ i18n.t('dash.top3') }}</span>
-        <span class="muted">{{ i18n.t('dash.top3Sub') }}</span>
+        @if (!annLoading() && announcements().length > 0) {
+          <div class="announcements">
+            <div class="progress-head mb-2">
+              <span class="section-title"><i class="pi pi-megaphone ann-icon"></i> {{ i18n.t('dash.announcements') }}</span>
+            </div>
+            <div class="ann-list">
+              @for (a of announcements().slice(0, 2); track a._id) {
+                <div class="ann-item">
+                  <span class="ann-pin" [class.pinned]="a.pinned"><i class="pi pi-bookmark"></i></span>
+                  <div class="ann-body">
+                    <strong>{{ a.title }}</strong>
+                    <span class="muted small">{{ a.body }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
-      @if (lbLoading()) {
-        <div class="state">{{ i18n.t('landing.leaderboard.loading') }}</div>
-      } @else if (lbError()) {
-        <div class="state">{{ i18n.t('landing.leaderboard.error') }}</div>
-      } @else if (leaderboard().length === 0) {
-        <div class="state">{{ i18n.t('landing.leaderboard.empty') }}</div>
-      } @else {
-        <div class="top3">
-          @for (s of leaderboard(); track s._id; let i = $index) {
-            <div class="top3-row">
-              <div class="top3-rank" [class.top3-first]="i === 0" [class.top3-second]="i === 1" [class.top3-third]="i === 2">
-                {{ i + 1 }}
-              </div>
-              <div class="top3-name"><strong>{{ s.name }}</strong></div>
-              <span class="top3-pts">{{ i18n.t('landing.leaderboard.pts', { e: s.earned }) }}</span>
+
+      <div class="dash-col">
+        <p-card class="top3-card">
+          <div class="progress-head mb-3">
+            <span class="section-title"><i class="pi pi-trophy top3-icon"></i> {{ i18n.t('dash.top3') }}</span>
+            <span class="muted">{{ i18n.t('dash.top3Sub') }}</span>
+          </div>
+          @if (lbLoading()) {
+            <div class="state">{{ i18n.t('landing.leaderboard.loading') }}</div>
+          } @else if (lbError()) {
+            <div class="state">{{ i18n.t('landing.leaderboard.error') }}</div>
+          } @else if (leaderboard().length === 0) {
+            <div class="state">{{ i18n.t('landing.leaderboard.empty') }}</div>
+          } @else {
+            <div class="top3">
+              @for (s of leaderboard(); track s._id; let i = $index) {
+                <div class="top3-row">
+                  <div class="top3-rank" [class.top3-first]="i === 0" [class.top3-second]="i === 1" [class.top3-third]="i === 2">
+                    {{ i + 1 }}
+                  </div>
+                  <div class="top3-name"><strong>{{ s.name }}</strong></div>
+                  <span class="top3-pts">{{ i18n.t('landing.leaderboard.pts', { e: s.earned }) }}</span>
+                </div>
+              }
             </div>
           }
-        </div>
-      }
-    </p-card>
+        </p-card>
+      </div>
+    </div>
 
     <p-card>
       <div class="progress-head mb-3">
@@ -175,7 +215,10 @@
         </a>
       </div>
       @if (p.exams.length === 0 && p.homeworks.length === 0) {
-        <div class="state">{{ i18n.t('dash.noGrades') }}</div>
+        <div class="state">
+          <i class="pi pi-chart-line"></i>
+          <span>{{ i18n.t('dash.noGrades') }}</span>
+        </div>
       } @else {
         <p-table [value]="recentGrades(p)" [size]="'small'">
           <ng-template #header>

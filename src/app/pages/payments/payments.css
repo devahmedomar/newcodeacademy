@@ -34,9 +34,36 @@
 }
 
 .status-banner.paid {
-  background: var(--p-green-50);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--p-green-500) 16%, var(--p-content-background)), var(--p-content-background) 65%);
   border: 1px solid var(--p-green-200);
   color: var(--p-green-900);
+}
+
+.status-banner .status-icon.pop {
+  position: relative;
+  background: var(--p-green-500);
+  color: #fff;
+  animation: pay-pop 0.55s var(--nca-ease) both;
+}
+
+.status-banner .status-icon.pop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--p-green-500);
+  animation: pay-ring 0.9s var(--nca-ease) both;
+}
+
+@keyframes pay-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pay-ring {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(1.7); opacity: 0; }
 }
 
 .status-banner.due {

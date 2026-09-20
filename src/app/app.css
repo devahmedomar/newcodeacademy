@@ -1,7 +1,8 @@
 .topbar {
-  background: #0f172a;
+  background: linear-gradient(180deg, #0b1224 0%, #0f172a 100%);
   color: #fff;
   padding: 0 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .topbar-inner {
@@ -38,7 +39,15 @@
 
 .brand-icon {
   color: var(--p-primary-color);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 40%, transparent);
 }
 
 .topnav {

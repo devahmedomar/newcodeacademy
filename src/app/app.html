@@ -37,8 +37,8 @@
     </div>
   </header>
 }
-<main class="page">
-  <router-outlet />
+<main class="page" [@routeAnim]="routeState">
+  <router-outlet (activate)="onActivate($event)" />
 </main>
 @if (auth.isStudent()) {
   <nav class="bottom-nav">

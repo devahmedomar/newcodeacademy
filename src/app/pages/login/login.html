@@ -23,6 +23,10 @@
   </div>
 
   <div class="auth-main">
+    <div class="mobile-brand">
+      <span class="mobile-brand-mark"><i class="pi pi-graduation-cap"></i></span>
+      <span class="mobile-brand-name">New Code Academy</span>
+    </div>
     <p-card class="auth-card">
       <ng-template #title>
         <div class="auth-card-title">
@@ -32,7 +36,9 @@
       </ng-template>
       <form (ngSubmit)="submit()">
         @if (error) {
-          <p-message severity="error" class="w-full mb-3">{{ error }}</p-message>
+          <div class="auth-error" aria-live="polite">
+            <p-message severity="error" class="w-full mb-3">{{ error }}</p-message>
+          </div>
         }
         <div class="field">
           <p-floatlabel>

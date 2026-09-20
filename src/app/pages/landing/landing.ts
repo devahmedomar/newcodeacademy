@@ -43,6 +43,23 @@ export class Landing implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  podium(): (LeaderboardEntry | null)[] {
+    const r = this.ranking();
+    return [r[1] ?? null, r[0] ?? null, r[2] ?? null];
+  }
+
+  rest(): LeaderboardEntry[] {
+    return this.ranking().slice(3);
+  }
+
+  place(s: LeaderboardEntry) {
+    return this.ranking().indexOf(s) + 1;
+  }
+
+  initial(s: LeaderboardEntry) {
+    return s.name.trim().charAt(0).toUpperCase() || '•';
+  }
+
   currentYear() {
     return new Date().getFullYear();
   }

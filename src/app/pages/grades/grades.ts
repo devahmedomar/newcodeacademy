@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Card } from 'primeng/card';
-import { Tag } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { PortalService } from '../../services/portal.service';
 import { I18nService } from '../../services/i18n.service';
@@ -9,7 +8,7 @@ import { Profile } from '../../models';
 
 @Component({
   selector: 'app-grades',
-  imports: [DatePipe, Card, Tag, TableModule],
+  imports: [DatePipe, Card, TableModule],
   styleUrl: './grades.css',
   templateUrl: './grades.html',
 })

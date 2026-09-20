@@ -105,7 +105,12 @@
               <td><strong>{{ e.title }}</strong></td>
               <td>{{ e.subject }}</td>
               <td>{{ e.grade }} / {{ e.maxGrade }}</td>
-              <td><p-tag [value]="percent(e.grade, e.maxGrade) + '%'" [severity]="gradeSeverity(percent(e.grade, e.maxGrade))" /></td>
+              <td>
+                <div class="percent-pip">
+                  <span class="pip-bar"><span class="pip-fill" [style.width.%]="percent(e.grade, e.maxGrade)" [style.background]="gradeColor(percent(e.grade, e.maxGrade))"></span></span>
+                  <span class="pip-label" [style.color]="gradeColor(percent(e.grade, e.maxGrade))">{{ percent(e.grade, e.maxGrade) }}%</span>
+                </div>
+              </td>
               <td>{{ e.date | date: 'mediumDate':undefined:i18n.lang() }}</td>
             </tr>
           </ng-template>
@@ -128,7 +133,12 @@
             <tr>
               <td><strong>{{ h.title }}</strong></td>
               <td>{{ h.points }} / {{ h.maxPoints }}</td>
-              <td><p-tag [value]="percent(h.points, h.maxPoints) + '%'" [severity]="gradeSeverity(percent(h.points, h.maxPoints))" /></td>
+              <td>
+                <div class="percent-pip">
+                  <span class="pip-bar"><span class="pip-fill" [style.width.%]="percent(h.points, h.maxPoints)" [style.background]="gradeColor(percent(h.points, h.maxPoints))"></span></span>
+                  <span class="pip-label" [style.color]="gradeColor(percent(h.points, h.maxPoints))">{{ percent(h.points, h.maxPoints) }}%</span>
+                </div>
+              </td>
               <td>{{ h.feedback || '—' }}</td>
             </tr>
           </ng-template>
@@ -152,7 +162,12 @@
               <td><strong>{{ a.lessonTitle }}</strong></td>
               <td>{{ a.module }}</td>
               <td>{{ a.score }} / {{ a.total }}</td>
-              <td><p-tag [value]="a.percent + '%'" [severity]="gradeSeverity(a.percent)" /></td>
+              <td>
+                <div class="percent-pip">
+                  <span class="pip-bar"><span class="pip-fill" [style.width.%]="a.percent" [style.background]="gradeColor(a.percent)"></span></span>
+                  <span class="pip-label" [style.color]="gradeColor(a.percent)">{{ a.percent }}%</span>
+                </div>
+              </td>
               <td>{{ a.createdAt | date: 'mediumDate':undefined:i18n.lang() }}</td>
             </tr>
           </ng-template>

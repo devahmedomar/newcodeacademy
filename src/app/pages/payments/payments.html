@@ -13,7 +13,7 @@
   @if (current(); as cp) {
     @if (cp.status === 'paid') {
       <div class="status-banner paid">
-        <span class="status-icon bg-green-50 text-green"><i class="pi pi-check"></i></span>
+        <span class="status-icon pop"><i class="pi pi-check"></i></span>
         <div class="status-body">
           <strong>{{ i18n.t('payments.allSet', { month: cp.month }) }}</strong>
           <span>
