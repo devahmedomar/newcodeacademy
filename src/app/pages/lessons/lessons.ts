@@ -139,6 +139,8 @@ export class Lessons implements OnDestroy {
     this.resumeSeconds.set(resume);
     this.player = new w.YT.Player('yt-player', {
       videoId: lesson.youtubeVideoId,
+      width: '100%',
+      height: '100%',
       playerVars: { rel: 0, start: resume > 5 ? resume : 0 },
       events: {
         onStateChange: (e: any) => this.onPlayerState(e, lesson._id),
